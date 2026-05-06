@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e97ad3dfb745e3b4688353cf9dcb3e43, type: 3}
+  m_Name: Bread
+  m_EditorClassIdentifier: 
+  itemId: bread
+  displayName: "\u786C\u9762\u5305"
+  description: "\u786C\u5F97\u80FD\u6253\u4EBA\u7684\u9762\u5305\uFF0C\u4F60\u7684\u7259\u9F7F\u770B\u89C1\u5B83\u5C31\u53D1\u9178"
+  icon: {fileID: 1842245092, guid: ecf0596341d4f0c4c9ff3ddd3b901658, type: 3}
+  previewSprite: {fileID: 0}
+  slotIndex: 0
+  consumeOnUse: 1
+  collectedFlagKey: item.bread.collected
+  effectType: 0
