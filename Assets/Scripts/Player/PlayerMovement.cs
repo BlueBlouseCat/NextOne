@@ -6,7 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public enum SceneEntryFacing
+    {
+        FaceLeft = -1,
+        FaceRight = 1
+    }
+
     private Rigidbody2D _rb;
+    private CapsuleCollider2D _bodyCollider;
+
     [SerializeField] private SkeletonAnimation _sa;
 
     [Header("Animation")]
@@ -16,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
     [SpineAnimation] public string jumpAnimation;
     [SpineAnimation] public string wakeUpAAnimation;
     private string _currentAnimation;
+
+    [Header("Scene Entry")]
+    [SerializeField] private SceneEntryFacing _defaultSceneEntryFacing = SceneEntryFacing.FaceLeft;
+    private bool _hasAppliedSceneEntryFacing;
 
     [Header("Move")]
     [SerializeField] private float _moveSpeed = 5f;
@@ -53,6 +65,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private float _groundCheckRadius = 0.1f;
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private float _groundProbeDistance = 0.08f;
+    [SerializeField, Range(0.01f, 1f)] private float _minGroundNormalY = 0.55f;
+    [SerializeField] private float _maxGroundedVerticalSpeed = 0.15f;
     private bool _isJumping;
     private bool _isGrounded;
     private bool _wasGroundedLastFrame;
@@ -67,10 +82,14 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("External Lock")]
     private bool _externalInputLocked;
+    private bool _jumpInputLocked;
+
+    private readonly RaycastHit2D[] _groundHits = new RaycastHit2D[8];
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _bodyCollider = GetComponent<CapsuleCollider2D>();
         _originalGravity = _rb.gravityScale;
 
         if (GameManager.Instance != null)
@@ -79,16 +98,56 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        if (!_hasAppliedSceneEntryFacing)
+            ApplyDefaultFacingForSceneEntry();
+
         PlayAnimation(idleAnimation, true);
+    }
+
+    public void ApplyFacingFromSceneSpawnPoint(SceneSpawnPoint spawnPoint)
+    {
+        if (spawnPoint == null)
+        {
+            ApplyDefaultFacingForSceneEntry();
+            return;
+        }
+
+        switch (spawnPoint.Facing)
+        {
+            case SceneSpawnPoint.SpawnFacing.FaceLeft:
+                ForceFacingImmediate(-1f);
+                break;
+
+            case SceneSpawnPoint.SpawnFacing.FaceRight:
+                ForceFacingImmediate(1f);
+                break;
+
+            default:
+                ApplyDefaultFacingForSceneEntry();
+                return;
+        }
+
+        AfterApplySceneEntryFacing();
+    }
+
+    public void ApplyDefaultFacingForSceneEntry()
+    {
+        ForceFacingImmediate((float)_defaultSceneEntryFacing);
+        AfterApplySceneEntryFacing();
+    }
+
+    private void AfterApplySceneEntryFacing()
+    {
+        _hasAppliedSceneEntryFacing = true;
+        _moveInput = Vector2.zero;
+
+        if (_rb != null)
+            _rb.velocity = new Vector2(0f, _rb.velocity.y);
     }
 
     private void FixedUpdate()
     {
-        _isGrounded = Physics2D.OverlapCircle(
-            _groundCheck.position,
-            _groundCheckRadius,
-            _groundLayer
-        );
+        _isGrounded = DetectGrounded();
 
         bool justLanded = !_wasGroundedLastFrame && _isGrounded;
         _wasGroundedLastFrame = _isGrounded;
@@ -132,6 +191,45 @@ public class PlayerMovement : MonoBehaviour
 
         UpdateMovement();
         _rb.velocity = new Vector2(_moveInput.x * _moveSpeed, _rb.velocity.y);
+    }
+
+    private bool DetectGrounded()
+    {
+        if (_rb == null)
+            return false;
+
+        if (_rb.velocity.y > _maxGroundedVerticalSpeed)
+            return false;
+
+        if (_bodyCollider != null)
+        {
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.useLayerMask = true;
+            filter.layerMask = _groundLayer;
+            filter.useTriggers = false;
+
+            int hitCount = _bodyCollider.Cast(Vector2.down, filter, _groundHits, _groundProbeDistance);
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                RaycastHit2D hit = _groundHits[i];
+                if (hit.collider == null) continue;
+
+                if (hit.normal.y >= _minGroundNormalY)
+                    return true;
+            }
+
+            return false;
+        }
+
+        if (_groundCheck == null)
+            return false;
+
+        return Physics2D.OverlapCircle(
+            _groundCheck.position,
+            _groundCheckRadius,
+            _groundLayer
+        );
     }
 
     public TrackEntry PlayAnimation(string animName, bool isLoop, bool restart = false)
@@ -186,6 +284,7 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateClimb()
     {
         if (!_canClimb) return;
+        if (_jumpInputLocked) return;
 
         float v = _moveInput.y;
         float h = _moveInput.x;
@@ -310,6 +409,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         if (_externalInputLocked) return;
+        if (_jumpInputLocked) return;
         if (!context.performed) return;
         if (_isWakingUp || _isLaunched) return;
 
@@ -406,10 +506,23 @@ public class PlayerMovement : MonoBehaviour
         float targetDir = horizontalInput > 0 ? 1f : -1f;
         if (_currentFaceDir == targetDir) return;
 
-        _currentFaceDir = targetDir;
+        ForceFacingImmediate(targetDir);
+    }
+
+    private void ForceFacingImmediate(float direction)
+    {
+        if (Mathf.Abs(direction) <= 0.01f) return;
+
+        _currentFaceDir = direction > 0f ? 1f : -1f;
 
         if (_sa != null && _sa.skeleton != null)
-            _sa.skeleton.ScaleX = _currentFaceDir;
+        {
+            float baseScaleX = Mathf.Abs(_sa.skeleton.ScaleX);
+            if (baseScaleX <= 0.0001f)
+                baseScaleX = 1f;
+
+            _sa.skeleton.ScaleX = baseScaleX * _currentFaceDir;
+        }
     }
 
     public void SetExternalInputLocked(bool locked)
@@ -420,6 +533,31 @@ public class PlayerMovement : MonoBehaviour
         {
             _moveInput = Vector2.zero;
             _rb.velocity = new Vector2(0f, _rb.velocity.y);
+        }
+    }
+
+    public void SetJumpInputLocked(bool locked)
+    {
+        _jumpInputLocked = locked;
+
+        if (locked && _isClimbing)
+            StopClimb();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (_bodyCollider != null)
+        {
+            Gizmos.color = Color.green;
+            Bounds bounds = _bodyCollider.bounds;
+            Vector3 center = new Vector3(bounds.center.x, bounds.min.y - (_groundProbeDistance * 0.5f), 0f);
+            Vector3 size = new Vector3(bounds.size.x * 0.9f, _groundProbeDistance, 0.02f);
+            Gizmos.DrawWireCube(center, size);
+        }
+        else if (_groundCheck != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(_groundCheck.position, _groundCheckRadius);
         }
     }
 }

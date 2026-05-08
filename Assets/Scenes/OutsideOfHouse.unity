@@ -476,6 +476,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 764099508}
+  _focusPoint: {fileID: 0}
+  _interactionPriority: 0
 --- !u!1 &140614020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2286,6 +2288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnPointId: brush1_to_outside
+  _spawnFacing: 2
 --- !u!1 &750222760
 GameObject:
   m_ObjectHideFlags: 0
@@ -3115,6 +3118,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 1955379676}
+  _focusPoint: {fileID: 0}
+  _interactionPriority: 0
 --- !u!1 &936714679
 GameObject:
   m_ObjectHideFlags: 0
@@ -3737,7 +3742,7 @@ MonoBehaviour:
   _currentScene: OutsideOfHouse
   _targetScene: Brush
   _useFade: 0
-  _targetSpawnPointId: 
+  _targetSpawnPointId: out_to_brush
   _targetPosition: {x: 0.7301737, y: -10.62705}
   _triggerRadius: 1.2
 --- !u!4 &1113561301
@@ -5419,6 +5424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnPointId: brush_to_outside
+  _spawnFacing: 0
 --- !u!4 &1955892702
 Transform:
   m_ObjectHideFlags: 0
@@ -5527,6 +5533,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _item: {fileID: 11400000, guid: bb03361f103eaea4c84442aa1886b334, type: 2}
   _outlineRoot: {fileID: 0}
+  _focusPoint: {fileID: 0}
+  _interactionPriority: 0
 --- !u!1 &1981236386
 GameObject:
   m_ObjectHideFlags: 0
@@ -5742,8 +5750,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
-  - {fileID: 1047315630}
   - {fileID: 727896053}
+  - {fileID: 1047315630}
   - {fileID: 1503924691}
   - {fileID: 962325775}
   - {fileID: 1020061506}
@@ -5754,7 +5762,7 @@ SceneRoots:
   - {fileID: 2080889245}
   - {fileID: 1544851062}
   - {fileID: 1421667077}
-  - {fileID: 748160494}
   - {fileID: 1113561301}
-  - {fileID: 1955892702}
   - {fileID: 296625212}
+  - {fileID: 748160494}
+  - {fileID: 1955892702}

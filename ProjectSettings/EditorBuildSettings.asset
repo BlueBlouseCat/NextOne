@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainStart.unity
+    guid: dcd7074ff234e234d99d54462a21f738
+  - enabled: 1
+    path: Assets/Scenes/Scene0.unity
+    guid: 59b7de8e6a354854588ff7ab9f287e42
+  - enabled: 1
     path: Assets/Scenes/BirthPlace.unity
     guid: b45eeb078536da64dbfb9bfb38346656
   - enabled: 1
@@ -42,9 +48,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MouseHole7.unity
     guid: 5846c2a3ca2b08e48812551996cfc3ce
   - enabled: 1
-    path: Assets/Scenes/Scene0.unity
-    guid: 59b7de8e6a354854588ff7ab9f287e42
-  - enabled: 1
-    path: Assets/Scenes/MainStart.unity
-    guid: dcd7074ff234e234d99d54462a21f738
+    path: Assets/Scenes/EndScene.unity
+    guid: 357673770baf4ac4abc5f49f536e283d
   m_configObjects: {}

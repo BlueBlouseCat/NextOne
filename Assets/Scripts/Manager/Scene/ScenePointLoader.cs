@@ -5,13 +5,15 @@ using UnityEngine.SceneManagement;
 public class ScenePointLoader : MonoBehaviour
 {
     [Header("Scene Limit")]
-    [SerializeField] private string _currentScene = SceneName.Scene1; //  OutsideOfHouse
+    [SerializeField] private string _currentScene = SceneName.Scene1;
 
     [Header("Target Scene")]
-    [SerializeField] private string _targetScene = SceneName.Scene2; // Brush
-
-    [SerializeField] private bool _useFade = false; // 是否使用淡入淡出效果
+    [SerializeField] private string _targetScene = SceneName.Scene2;
+    [SerializeField] private bool _useFade = false;
     [SerializeField] private string _targetSpawnPointId = "";
+
+    [TextArea(2, 4)]
+    [SerializeField] private string _transitionMessage = "";
 
     [Header("Trigger")]
     [SerializeField] private Vector2 _targetPosition = new Vector2(0.7301737f, -10.62705f);
@@ -64,10 +66,20 @@ public class ScenePointLoader : MonoBehaviour
 
         if (_useFade)
         {
-            if (string.IsNullOrEmpty(_targetSpawnPointId))
-                GameManager.Instance.LoadSceneWithFade(_targetScene);
+            if (string.IsNullOrEmpty(_transitionMessage))
+            {
+                if (string.IsNullOrEmpty(_targetSpawnPointId))
+                    GameManager.Instance.LoadSceneWithFade(_targetScene);
+                else
+                    GameManager.Instance.LoadSceneWithFade(_targetScene, _targetSpawnPointId);
+            }
             else
-                GameManager.Instance.LoadSceneWithFade(_targetScene, _targetSpawnPointId);
+            {
+                if (string.IsNullOrEmpty(_targetSpawnPointId))
+                    GameManager.Instance.LoadSceneWithFadeMessage(_targetScene, _transitionMessage);
+                else
+                    GameManager.Instance.LoadSceneWithFadeMessage(_targetScene, _targetSpawnPointId, _transitionMessage);
+            }
         }
         else
         {

@@ -19,6 +19,21 @@ public class ItemEffectController : MonoBehaviour
         if (petDoorTrigger != null && petDoorTrigger.CanHandleItem(item))
             return petDoorTrigger.TryUseItem(item);
 
+        BottlePartUseTrigger bottlePartTrigger = FindObjectOfType<BottlePartUseTrigger>();
+        if (bottlePartTrigger != null && bottlePartTrigger.CanHandleItem(item))
+            return bottlePartTrigger.TryUseItem(item);
+
+        LockUnlockLetterTrigger[] lockTriggers = FindObjectsOfType<LockUnlockLetterTrigger>();
+        for (int i = 0; i < lockTriggers.Length; i++)
+        {
+            LockUnlockLetterTrigger lockTrigger = lockTriggers[i];
+            if (lockTrigger == null) continue;
+            if (!lockTrigger.CanHandleItem(item)) continue;
+
+            if (lockTrigger.TryUseItem(item))
+                return true;
+        }
+
         switch (item.effectType)
         {
             case ItemEffectType.OpenWindow:

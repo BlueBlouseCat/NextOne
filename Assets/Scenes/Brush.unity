@@ -206,6 +206,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &109989001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 109989003}
+  - component: {fileID: 109989002}
+  m_Layer: 0
+  m_Name: Spawn_OutToBrush
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &109989002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109989001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2c0eda2ecbf4543b89b335a1425f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawnPointId: out_to_brush
+  _spawnFacing: 2
+--- !u!4 &109989003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109989001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.74, y: -3.79, z: -0.07292927}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &136410685
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,7 +623,7 @@ MonoBehaviour:
   _useRightEdge: 1
   _rightEdgeX: 9
   _rightTargetScene: Brush1
-  _rightTargetSpawnPointId: 
+  _rightTargetSpawnPointId: brush_to_brush1
   _rightUseFade: 0
   _useUpEdge: 0
   _upEdgeY: 7
@@ -1067,7 +1113,53 @@ MonoBehaviour:
     content: "\u4E0D\u8FC7\u90A3\u4E2A\u5B69\u5B50\u6211\u5012\u4E0D\u8BA8\u538C\uFF0C\u4ED6\u5E38\u5E38\u6765\u770B\u6211\uFF0C\u8FD8\u7ED9\u6211\u6BEF\u5B50\u548C\u98DF\u7269\u3002\u597D\u4E86\uFF0C\u4F60\u8D76\u7D27\u79BB\u5F00\u5427\uFF01"
   _dialogueCompleteFlag: mother_cat_dialogue_done
   _motherCatGoneSceneVisitedFlag: mother_cat_gone_scene_visited
---- !u!1001 &1437747331
+--- !u!1 &1438311441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1438311443}
+  - component: {fileID: 1438311442}
+  m_Layer: 0
+  m_Name: Spawn_Brush1ToBrush
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1438311442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438311441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2c0eda2ecbf4543b89b335a1425f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawnPointId: brush1_to_brush
+  _spawnFacing: 0
+--- !u!4 &1438311443
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438311441}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.11, y: -3.79, z: -0.07292927}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1460946966
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1085,11 +1177,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5214442357898237229, guid: 75417f50b6275374088f0324ec35ad8e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.86
+      value: -7.82
       objectReference: {fileID: 0}
     - target: {fileID: 5214442357898237229, guid: 75417f50b6275374088f0324ec35ad8e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.64
+      value: -3.69
       objectReference: {fileID: 0}
     - target: {fileID: 5214442357898237229, guid: 75417f50b6275374088f0324ec35ad8e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1128,51 +1220,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75417f50b6275374088f0324ec35ad8e, type: 3}
---- !u!1 &1438311441
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1438311443}
-  - component: {fileID: 1438311442}
-  m_Layer: 0
-  m_Name: Spawn_Brush1ToBrush
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1438311442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438311441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be2c0eda2ecbf4543b89b335a1425f6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spawnPointId: brush1_to_brush
---- !u!4 &1438311443
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438311441}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.11, y: -3.79, z: -0.07292927}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1484987797
 GameObject:
   m_ObjectHideFlags: 0
@@ -1603,12 +1650,13 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1545922202}
+  - {fileID: 471297568}
   - {fileID: 1591713748}
   - {fileID: 717768089}
-  - {fileID: 1437747331}
+  - {fileID: 1460946966}
   - {fileID: 1199070765}
   - {fileID: 506622565}
   - {fileID: 1401444208}
-  - {fileID: 471297568}
-  - {fileID: 1438311443}
   - {fileID: 205997952}
+  - {fileID: 109989003}
+  - {fileID: 1438311443}

@@ -11,6 +11,8 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _leftTargetScene;
     [SerializeField] private string _leftTargetSpawnPointId = "";
     [SerializeField] private bool _leftUseFade = false;
+    [TextArea(2, 4)]
+    [SerializeField] private string _leftTransitionMessage = "";
 
     [Header("Right Edge")]
     [SerializeField] private bool _useRightEdge = false;
@@ -18,7 +20,8 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _rightTargetScene;
     [SerializeField] private string _rightTargetSpawnPointId = "";
     [SerializeField] private bool _rightUseFade = false;
-
+    [TextArea(2, 4)]
+    [SerializeField] private string _rightTransitionMessage = "";
 
     [Header("Up Edge")]
     [SerializeField] private bool _useUpEdge = false;
@@ -26,6 +29,8 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _upTargetScene;
     [SerializeField] private string _upTargetSpawnPointId = "";
     [SerializeField] private bool _upUseFade = false;
+    [TextArea(2, 4)]
+    [SerializeField] private string _upTransitionMessage = "";
 
     private void Update()
     {
@@ -37,49 +42,43 @@ public class SceneEdgeLoader : MonoBehaviour
         float playerX = GameManager.Instance.CurrentPlayer.position.x;
         float playerY = GameManager.Instance.CurrentPlayer.position.y;
 
-        if(_useLeftEdge && playerX <= _leftEdgeX)
+        if (_useLeftEdge && playerX <= _leftEdgeX)
         {
-            LoadFromLeftEdge();
+            LoadTargetScene(_leftTargetScene, _leftTargetSpawnPointId, _leftUseFade, _leftTransitionMessage);
             return;
         }
 
-        if(_useRightEdge && playerX >= _rightEdgeX)
+        if (_useRightEdge && playerX >= _rightEdgeX)
         {
-            LoadFromRightEdge();
+            LoadTargetScene(_rightTargetScene, _rightTargetSpawnPointId, _rightUseFade, _rightTransitionMessage);
             return;
         }
 
-        if(_useUpEdge && playerY >= _upEdgeY)
+        if (_useUpEdge && playerY >= _upEdgeY)
         {
-            LoadFromUpEdge();
+            LoadTargetScene(_upTargetScene, _upTargetSpawnPointId, _upUseFade, _upTransitionMessage);
             return;
         }
     }
 
-    private void LoadFromLeftEdge()
-    {
-        LoadTargetScene(_leftTargetScene, _leftTargetSpawnPointId, _leftUseFade);
-    }
-
-    private void LoadFromRightEdge()
-    {
-        LoadTargetScene(_rightTargetScene, _rightTargetSpawnPointId, _rightUseFade);
-    }
-
-    private void LoadFromUpEdge()
-    {
-        LoadTargetScene(_upTargetScene, _upTargetSpawnPointId, _upUseFade);
-    }
-
-
-    private void LoadTargetScene(string targetScene, string targetSpawnPointId, bool useFade)
+    private void LoadTargetScene(string targetScene, string targetSpawnPointId, bool useFade, string transitionMessage)
     {
         if (useFade)
         {
-            if (string.IsNullOrEmpty(targetSpawnPointId))
-                GameManager.Instance.LoadSceneWithFade(targetScene);
+            if (string.IsNullOrEmpty(transitionMessage))
+            {
+                if (string.IsNullOrEmpty(targetSpawnPointId))
+                    GameManager.Instance.LoadSceneWithFade(targetScene);
+                else
+                    GameManager.Instance.LoadSceneWithFade(targetScene, targetSpawnPointId);
+            }
             else
-                GameManager.Instance.LoadSceneWithFade(targetScene, targetSpawnPointId);
+            {
+                if (string.IsNullOrEmpty(targetSpawnPointId))
+                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, transitionMessage);
+                else
+                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, targetSpawnPointId, transitionMessage);
+            }
 
             return;
         }
@@ -89,5 +88,4 @@ public class SceneEdgeLoader : MonoBehaviour
         else
             GameManager.Instance.LoadScene(targetScene, targetSpawnPointId);
     }
-
 }

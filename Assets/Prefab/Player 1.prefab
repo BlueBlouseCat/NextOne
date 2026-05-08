@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3829676798088907945}
   - component: {fileID: 5102239713426698163}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -428,7 +428,7 @@ MonoBehaviour:
   skeletonDataAsset: {fileID: 11400000, guid: 1d84b6436abcace4b93b1e3db89fc856, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
-  initialFlipX: 1
+  initialFlipX: 0
   initialFlipY: 0
   updateWhenInvisible: 3
   separatorSlotNames: []
