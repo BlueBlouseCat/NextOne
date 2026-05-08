@@ -22,6 +22,12 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     [Header("Scene")]
     [SerializeField] private string _currentScene = "House";
 
+    [Header("Unlock By Spawn")]
+    [SerializeField] private bool _requireUnlockBySpawnPoint = true;
+    [SerializeField] private string _unlockWhenSpawnPointId = "hole6_to_house";
+    [SerializeField] private string _spawnUnlockedFlag = "house.telegraph.unlocked_from_hole6";
+    [SerializeField] private bool _unlockPermanentlyAfterFirstMatch = true;
+
     [Header("First Interaction")]
     [SerializeField] private WorldInspectable _inspectData;
     [SerializeField] private bool _rememberFirstInspectWithFlag = true;
@@ -46,6 +52,10 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     [SerializeField] private int _maxCodeLength = 64;
     [SerializeField] private string _submitActionName = "Submit";
     [SerializeField] private TelegraphPasswordCanvasContent[] _passwordContents = new TelegraphPasswordCanvasContent[0];
+
+    [Header("Disable After Ring Complete")]
+    [SerializeField] private bool _disableAfterRingCompleted = true;
+    [SerializeField] private string _completedFlag = "house.telegraph.completed";
 
     [Header("Reveal On Decode")]
     [SerializeField] private GameObject _wineGlass1;
@@ -74,6 +84,8 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     private bool _hasSeenFirstInspect;
     private bool _waitingRingCompleteResult;
     private bool _hasAppliedDecodeReveal;
+    private bool _isUnlockedBySpawn;
+    private bool _hasCompletedInteraction;
     private string _currentCode = string.Empty;
     private string _pendingResultPassword = string.Empty;
 
@@ -95,12 +107,14 @@ public class TelegraphInteractionTrigger : MonoBehaviour
 
     private void OnEnable()
     {
+        RefreshPersistentStates();
         HideHint();
         InteractionFocusService.SetCandidate(this, _focusPoint, false, _interactionPriority);
     }
 
     private void Start()
     {
+        RefreshPersistentStates();
         _hasSeenFirstInspect = LoadFirstInspectState();
 
         if (_forceHideTelegraph2OnStart)
@@ -153,6 +167,19 @@ public class TelegraphInteractionTrigger : MonoBehaviour
             return;
         }
 
+        RefreshPersistentStates();
+
+        if (!CanInteractTelegraph())
+        {
+            HideHint();
+
+            if (_autoCloseTelegraph2OnExit && IsTelegraph2Active())
+                ForceCloseTelegraph2();
+
+            InteractionFocusService.SetCandidate(this, _focusPoint, false, _interactionPriority);
+            return;
+        }
+
         InteractionFocusService.SetCandidate(this, _focusPoint, _playerInRange, _interactionPriority);
 
         bool popupOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsPopupOpen;
@@ -170,6 +197,23 @@ public class TelegraphInteractionTrigger : MonoBehaviour
 
         if (IsTelegraph2Active() && !_waitingRingCompleteResult)
             HandleCodeInput();
+    }
+
+    private void RefreshPersistentStates()
+    {
+        _isUnlockedBySpawn = ResolveSpawnUnlockState();
+        _hasCompletedInteraction = LoadCompletedState();
+    }
+
+    private bool CanInteractTelegraph()
+    {
+        if (_disableAfterRingCompleted && _hasCompletedInteraction)
+            return false;
+
+        if (_requireUnlockBySpawnPoint && !_isUnlockedBySpawn)
+            return false;
+
+        return true;
     }
 
     private bool HandleResultCanvasCloseInput()
@@ -363,9 +407,23 @@ public class TelegraphInteractionTrigger : MonoBehaviour
             return;
 
         _waitingRingCompleteResult = false;
+        MarkCompletedIfNeeded();
         ShowResultCanvas(_pendingResultPassword);
         _pendingResultPassword = string.Empty;
         _pendingRingers.Clear();
+    }
+
+    private void MarkCompletedIfNeeded()
+    {
+        if (!_disableAfterRingCompleted)
+            return;
+
+        if (_hasCompletedInteraction)
+            return;
+
+        _hasCompletedInteraction = true;
+        SaveCompletedState();
+        HideHint();
     }
 
     private void ShowResultCanvas(string normalizedPassword)
@@ -630,17 +688,41 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         {
             char c = raw[i];
 
-            if (c == '.' || c == '路')
+            if (c == '.' || c == '。' || c == '·' || c == '1')
                 sb.Append('.');
-            else if (c == '-')
-                sb.Append('-');
-            else if (c == '1')
-                sb.Append('.');
-            else if (c == '2')
+            else if (c == '-' || c == '—' || c == '_' || c == '2')
                 sb.Append('-');
         }
 
         return sb.ToString();
+    }
+
+    private bool ResolveSpawnUnlockState()
+    {
+        if (!_requireUnlockBySpawnPoint)
+            return true;
+
+        if (GameManager.Instance == null)
+            return false;
+
+        if (_unlockPermanentlyAfterFirstMatch &&
+            !string.IsNullOrWhiteSpace(_spawnUnlockedFlag) &&
+            GameManager.Instance.GetFlag(_spawnUnlockedFlag))
+        {
+            return true;
+        }
+
+        bool cameFromRequiredSpawn =
+            !string.IsNullOrWhiteSpace(_unlockWhenSpawnPointId) &&
+            GameManager.Instance.LastSpawnPointId == _unlockWhenSpawnPointId;
+
+        if (!cameFromRequiredSpawn)
+            return false;
+
+        if (_unlockPermanentlyAfterFirstMatch && !string.IsNullOrWhiteSpace(_spawnUnlockedFlag))
+            GameManager.Instance.SetFlag(_spawnUnlockedFlag, true);
+
+        return true;
     }
 
     private bool LoadFirstInspectState()
@@ -659,6 +741,24 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         if (string.IsNullOrWhiteSpace(_firstInspectFlag)) return;
 
         GameManager.Instance.SetFlag(_firstInspectFlag, true);
+    }
+
+    private bool LoadCompletedState()
+    {
+        if (!_disableAfterRingCompleted) return false;
+        if (GameManager.Instance == null) return false;
+        if (string.IsNullOrWhiteSpace(_completedFlag)) return false;
+
+        return GameManager.Instance.GetFlag(_completedFlag);
+    }
+
+    private void SaveCompletedState()
+    {
+        if (!_disableAfterRingCompleted) return;
+        if (GameManager.Instance == null) return;
+        if (string.IsNullOrWhiteSpace(_completedFlag)) return;
+
+        GameManager.Instance.SetFlag(_completedFlag, true);
     }
 
     private void RefreshRevealVisualState()

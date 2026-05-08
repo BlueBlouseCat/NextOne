@@ -23,9 +23,7 @@ public class ElevatorRide : MonoBehaviour
 
     [Header("Target Scene")]
     [SerializeField] private string _targetScene = "House";
-
     [SerializeField] private string _targetSpawnPointId = "hole6_to_house";
-
     [SerializeField] private bool _useFade = false;
 
     private Transform _player;
@@ -128,7 +126,8 @@ public class ElevatorRide : MonoBehaviour
 
         if (_playerRigidbody != null)
         {
-            _playerRigidbody.velocity = Vector2.zero;
+            Vector2 currentVelocity = _playerRigidbody.velocity;
+            _playerRigidbody.velocity = new Vector2(currentVelocity.x, 0f);
             _playerRigidbody.angularVelocity = 0f;
             _playerRigidbody.MovePosition(_playerRigidbody.position + new Vector2(0f, stepY));
         }
@@ -243,14 +242,13 @@ public class ElevatorRide : MonoBehaviour
     private void LockPlayerForRide()
     {
         if (_playerMovement != null)
-            _playerMovement.SetExternalInputLocked(true);
+            _playerMovement.SetJumpInputLocked(true);
 
         if (_playerRigidbody != null)
         {
             _cachedGravityScale = _playerRigidbody.gravityScale;
             _cachedGravityValid = true;
 
-            _playerRigidbody.velocity = Vector2.zero;
             _playerRigidbody.angularVelocity = 0f;
             _playerRigidbody.gravityScale = 0f;
         }
@@ -259,11 +257,11 @@ public class ElevatorRide : MonoBehaviour
     private void RestorePlayerState()
     {
         if (_playerMovement != null)
-            _playerMovement.SetExternalInputLocked(false);
+            _playerMovement.SetJumpInputLocked(false);
 
         if (_playerRigidbody != null)
         {
-            _playerRigidbody.velocity = Vector2.zero;
+            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0f);
             _playerRigidbody.angularVelocity = 0f;
 
             if (_cachedGravityValid)

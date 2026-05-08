@@ -1152,6 +1152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnPointId: hole2_to_hole1
+  _spawnFacing: 2
 --- !u!4 &1019607484
 Transform:
   m_ObjectHideFlags: 0
