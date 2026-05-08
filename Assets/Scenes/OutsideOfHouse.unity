@@ -5499,6 +5499,7 @@ GameObject:
   - component: {fileID: 1960690179}
   - component: {fileID: 1960690180}
   - component: {fileID: 1960690181}
+  - component: {fileID: 1960690182}
   m_Layer: 0
   m_Name: PickedupStick
   m_TagString: Untagged
@@ -5583,6 +5584,24 @@ MonoBehaviour:
   _outlineRoot: {fileID: 0}
   _focusPoint: {fileID: 0}
   _interactionPriority: 0
+--- !u!114 &1960690182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960690178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e26581f7a13285549a6ca6c888d5191d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentScene: OutsideOfHouse
+  unlockFlag: crow_intro_dialogue_done
+  targetInteractable: {fileID: 1960690181}
+  lockInteractableBeforeUnlock: 1
+  showAfterUnlock: []
+  hideWhileLocked: []
 --- !u!1 &1981236386
 GameObject:
   m_ObjectHideFlags: 0
