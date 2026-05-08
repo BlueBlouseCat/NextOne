@@ -8,6 +8,7 @@ public class ItemPreviewViewerUI : MonoBehaviour
     [Header("Optional Existing UI")]
     [SerializeField] private GameObject _root;
     [SerializeField] private Image _previewImage;
+    [SerializeField] private Image _previewOverlayImage;
 
     [Header("Runtime UI")]
     [SerializeField] private Vector2 _maxPreviewSize = new Vector2(1100f, 700f);
@@ -47,12 +48,34 @@ public class ItemPreviewViewerUI : MonoBehaviour
         if (item.previewSprite == null) return false;
 
         EnsureUI();
-
-        if (_root == null || _previewImage == null)
-            return false;
+        if (_root == null || _previewImage == null) return false;
 
         _previewImage.sprite = item.previewSprite;
-        ResizePreview(item.previewSprite);
+        ResizePreview(_previewImage.rectTransform, item.previewSprite, _maxPreviewSize);
+        _previewImage.enabled = true;
+        _previewImage.transform.SetAsLastSibling();
+
+        if (_previewOverlayImage != null)
+        {
+            if (item.previewOverlaySprite != null)
+            {
+                _previewOverlayImage.sprite = item.previewOverlaySprite;
+                _previewOverlayImage.color = new Color(1f, 1f, 1f, Mathf.Clamp01(item.previewOverlayAlpha));
+                ResizePreview(_previewOverlayImage.rectTransform, item.previewOverlaySprite, _maxPreviewSize);
+                _previewOverlayImage.rectTransform.anchoredPosition = item.previewOverlayOffset;
+                _previewOverlayImage.rectTransform.sizeDelta = new Vector2(
+                    _previewOverlayImage.rectTransform.sizeDelta.x * Mathf.Max(0.01f, item.previewOverlaySizeMultiplier.x),
+                    _previewOverlayImage.rectTransform.sizeDelta.y * Mathf.Max(0.01f, item.previewOverlaySizeMultiplier.y)
+                );
+                _previewOverlayImage.enabled = true;
+                _previewOverlayImage.transform.SetAsLastSibling();
+            }
+            else
+            {
+                _previewOverlayImage.sprite = null;
+                _previewOverlayImage.enabled = false;
+            }
+        }
 
         _root.SetActive(true);
         InventoryUI.Instance?.ShowInteractHint(false);
@@ -71,6 +94,18 @@ public class ItemPreviewViewerUI : MonoBehaviour
 
     public void CloseImmediate()
     {
+        if (_previewImage != null)
+        {
+            _previewImage.sprite = null;
+            _previewImage.enabled = false;
+        }
+
+        if (_previewOverlayImage != null)
+        {
+            _previewOverlayImage.sprite = null;
+            _previewOverlayImage.enabled = false;
+        }
+
         if (_root != null)
             _root.SetActive(false);
     }
@@ -100,7 +135,12 @@ public class ItemPreviewViewerUI : MonoBehaviour
     private void EnsureUI()
     {
         if (_root != null && _previewImage != null)
+        {
+            if (_previewOverlayImage == null)
+                CreateOverlayImage(_root.transform);
+
             return;
+        }
 
         CreateRuntimeUI();
     }
@@ -151,28 +191,41 @@ public class ItemPreviewViewerUI : MonoBehaviour
 
         _root = rootGO;
         _previewImage = previewImage;
+        CreateOverlayImage(rootGO.transform);
     }
 
-    private void ResizePreview(Sprite sprite)
+    private void CreateOverlayImage(Transform parent)
     {
-        if (sprite == null || _previewImage == null) return;
+        GameObject overlayGO = new GameObject("PreviewOverlayImage");
+        overlayGO.transform.SetParent(parent, false);
 
-        RectTransform rect = _previewImage.rectTransform;
-        if (rect == null) return;
+        RectTransform overlayRect = overlayGO.AddComponent<RectTransform>();
+        overlayRect.anchorMin = new Vector2(0.5f, 0.5f);
+        overlayRect.anchorMax = new Vector2(0.5f, 0.5f);
+        overlayRect.pivot = new Vector2(0.5f, 0.5f);
+        overlayRect.anchoredPosition = Vector2.zero;
+        overlayRect.sizeDelta = _maxPreviewSize;
+
+        Image overlayImage = overlayGO.AddComponent<Image>();
+        overlayImage.preserveAspect = true;
+        overlayImage.raycastTarget = false;
+        overlayImage.enabled = false;
+
+        _previewOverlayImage = overlayImage;
+    }
+
+    private void ResizePreview(RectTransform rect, Sprite sprite, Vector2 maxSize)
+    {
+        if (sprite == null || rect == null) return;
 
         Vector2 spriteSize = sprite.rect.size;
         if (spriteSize.x <= 0f || spriteSize.y <= 0f)
         {
-            rect.sizeDelta = _maxPreviewSize;
+            rect.sizeDelta = maxSize;
             return;
         }
 
-        float scale = Mathf.Min(
-            _maxPreviewSize.x / spriteSize.x,
-            _maxPreviewSize.y / spriteSize.y,
-            1f
-        );
-
+        float scale = Mathf.Min(maxSize.x / spriteSize.x, maxSize.y / spriteSize.y, 1f);
         rect.sizeDelta = spriteSize * scale;
     }
 }

@@ -18,6 +18,10 @@ public class ItemDefinition : ScriptableObject
 
     [Header("Preview")]
     public Sprite previewSprite;
+    public Sprite previewOverlaySprite;
+    public Vector2 previewOverlayOffset = new Vector2(140f, -40f);
+    public Vector2 previewOverlaySizeMultiplier = Vector2.one;
+    [Range(0f, 1f)] public float previewOverlayAlpha = 1f;
 
     [Range(0, 2)] public int slotIndex;
     public bool consumeOnUse = true;

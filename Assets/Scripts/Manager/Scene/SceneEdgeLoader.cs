@@ -11,8 +11,6 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _leftTargetScene;
     [SerializeField] private string _leftTargetSpawnPointId = "";
     [SerializeField] private bool _leftUseFade = false;
-    [TextArea(2, 4)]
-    [SerializeField] private string _leftTransitionMessage = "";
 
     [Header("Right Edge")]
     [SerializeField] private bool _useRightEdge = false;
@@ -20,8 +18,6 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _rightTargetScene;
     [SerializeField] private string _rightTargetSpawnPointId = "";
     [SerializeField] private bool _rightUseFade = false;
-    [TextArea(2, 4)]
-    [SerializeField] private string _rightTransitionMessage = "";
 
     [Header("Up Edge")]
     [SerializeField] private bool _useUpEdge = false;
@@ -29,8 +25,6 @@ public class SceneEdgeLoader : MonoBehaviour
     [SerializeField] private string _upTargetScene;
     [SerializeField] private string _upTargetSpawnPointId = "";
     [SerializeField] private bool _upUseFade = false;
-    [TextArea(2, 4)]
-    [SerializeField] private string _upTransitionMessage = "";
 
     private void Update()
     {
@@ -44,28 +38,30 @@ public class SceneEdgeLoader : MonoBehaviour
 
         if (_useLeftEdge && playerX <= _leftEdgeX)
         {
-            LoadTargetScene(_leftTargetScene, _leftTargetSpawnPointId, _leftUseFade, _leftTransitionMessage);
+            LoadTargetScene(_leftTargetScene, _leftTargetSpawnPointId, _leftUseFade);
             return;
         }
 
         if (_useRightEdge && playerX >= _rightEdgeX)
         {
-            LoadTargetScene(_rightTargetScene, _rightTargetSpawnPointId, _rightUseFade, _rightTransitionMessage);
+            LoadTargetScene(_rightTargetScene, _rightTargetSpawnPointId, _rightUseFade);
             return;
         }
 
         if (_useUpEdge && playerY >= _upEdgeY)
         {
-            LoadTargetScene(_upTargetScene, _upTargetSpawnPointId, _upUseFade, _upTransitionMessage);
+            LoadTargetScene(_upTargetScene, _upTargetSpawnPointId, _upUseFade);
             return;
         }
     }
 
-    private void LoadTargetScene(string targetScene, string targetSpawnPointId, bool useFade, string transitionMessage)
+    private void LoadTargetScene(string targetScene, string targetSpawnPointId, bool useFade)
     {
+        string message = GetTransitionMessage(targetScene);
+
         if (useFade)
         {
-            if (string.IsNullOrEmpty(transitionMessage))
+            if (string.IsNullOrEmpty(message))
             {
                 if (string.IsNullOrEmpty(targetSpawnPointId))
                     GameManager.Instance.LoadSceneWithFade(targetScene);
@@ -75,9 +71,9 @@ public class SceneEdgeLoader : MonoBehaviour
             else
             {
                 if (string.IsNullOrEmpty(targetSpawnPointId))
-                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, transitionMessage);
+                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, message);
                 else
-                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, targetSpawnPointId, transitionMessage);
+                    GameManager.Instance.LoadSceneWithFadeMessage(targetScene, targetSpawnPointId, message);
             }
 
             return;
@@ -87,5 +83,16 @@ public class SceneEdgeLoader : MonoBehaviour
             GameManager.Instance.LoadScene(targetScene);
         else
             GameManager.Instance.LoadScene(targetScene, targetSpawnPointId);
+    }
+
+    private string GetTransitionMessage(string targetScene)
+    {
+        if (_currentScene == "BirthPlace" && targetScene == "OutsideOfHouse")
+            return "韦尔斯利庄园·庭院";
+
+        if (_currentScene == "OutsideOfHouse" && targetScene == "House")
+            return "第五步兵营军帐·前线";
+
+        return string.Empty;
     }
 }
