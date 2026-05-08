@@ -246,7 +246,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 22071613}
-  - component: {fileID: 22071614}
   m_Layer: 0
   m_Name: Key_InteractTrigger
   m_TagString: Untagged
@@ -269,21 +268,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1013008550}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &22071614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22071612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a7dab19b24418d4ea1e398d6863e916, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _target: {fileID: 0}
-  _focusPoint: {fileID: 1287202196}
-  _interactionPriority: 0
 --- !u!1 &34094617
 GameObject:
   m_ObjectHideFlags: 0
@@ -4505,7 +4489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentScene: House
-  _requiredKeyItem: {fileID: 11400000, guid: 96b6fdbc0b3b5df42860fa1ecea27389, type: 2}
+  _requiredKeyItem: {fileID: 11400000, guid: 038431e2101ca0c449ab237dab02b85a, type: 2}
   _consumeKeyOnUse: 1
   _unlockFlag: house.lock_unlocked
   _lockRoot: {fileID: 860424682}
@@ -5422,7 +5406,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1013008550
 Transform:
   m_ObjectHideFlags: 0
@@ -5498,7 +5482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8415da4da7a61b94a9b0ac50ccac9ccb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _item: {fileID: 11400000, guid: 96b6fdbc0b3b5df42860fa1ecea27389, type: 2}
+  _item: {fileID: 11400000, guid: 038431e2101ca0c449ab237dab02b85a, type: 2}
   _outlineRoot: {fileID: 0}
   _focusPoint: {fileID: 1287202196}
   _interactionPriority: 0
@@ -5616,7 +5600,7 @@ MonoBehaviour:
   _keyInspectTrigger: {fileID: 22071612}
   _keyPickupInteractable: {fileID: 1013008552}
   _keyPickupCollider: {fileID: 1013008551}
-  _keyExposedAnchor: {fileID: 0}
+  _keyExposedAnchor: {fileID: 2069048465}
   _moveKeyToExposedAnchorAfterUse: 1
   _restoreKeyToOriginalPoseWhenNotCompleted: 1
   _forceBottle1VisibleBeforeUse: 1
@@ -9395,6 +9379,53 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.71751595, y: 0.23558271}
   m_EdgeRadius: 0
+--- !u!1 &1831910494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1831910497}
+  - component: {fileID: 1831910496}
+  m_Layer: 0
+  m_Name: SceneBgmCue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1831910496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831910494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33fb01bcb704cd49ac1c76197d0d9b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _clip: {fileID: 8300000, guid: 42bde7f613149d545b5e225a7f929968, type: 3}
+  _volume: 1
+  _loop: 1
+--- !u!4 &1831910497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831910494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 971.3172, y: 547.20966, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1833002331
 GameObject:
   m_ObjectHideFlags: 0
@@ -11008,6 +11039,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2069048464
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2069048465}
+  m_Layer: 0
+  m_Name: KeyExposedAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2069048465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069048464}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.05, y: 4.37, z: 0.073718295}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2082737699
 GameObject:
   m_ObjectHideFlags: 0
@@ -11881,6 +11943,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 554146703}
   - {fileID: 212295790}
+  - {fileID: 1831910497}
   - {fileID: 246670965}
   - {fileID: 310138156}
   - {fileID: 998705373}
@@ -11894,3 +11957,4 @@ SceneRoots:
   - {fileID: 1403913418}
   - {fileID: 1937405215}
   - {fileID: 296465509}
+  - {fileID: 2069048465}
