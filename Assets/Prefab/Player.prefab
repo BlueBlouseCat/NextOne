@@ -70,8 +70,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.55524826, y: 4.6034145}
-  m_Size: {x: 4.645014, y: 9.555769}
+  m_Offset: {x: -0.040824413, y: 4.6034145}
+  m_Size: {x: 3.616166, y: 9.555769}
   m_Direction: 0
 --- !u!50 &7867600097185274671
 Rigidbody2D:
@@ -292,6 +292,7 @@ MonoBehaviour:
   climbAnimation: pa
   jumpAnimation: jump2
   wakeUpAAnimation: wake up-A
+  _defaultSceneEntryFacing: -1
   _moveSpeed: 5
   _climbSpeed: 3
   _headOffset: 0.1

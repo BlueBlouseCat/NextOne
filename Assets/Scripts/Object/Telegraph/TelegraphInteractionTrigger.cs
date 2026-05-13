@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class TelegraphInteractionTrigger : MonoBehaviour
 {
@@ -35,7 +35,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
 
     [Header("Telegraph2")]
     [SerializeField] private GameObject _telegraph2;
-    [SerializeField] private Text _txtCode;
+    [SerializeField] private TMP_Text _txtCode;
     [SerializeField] private string _idleDisplayText = "";
     [SerializeField] private bool _forceHideTelegraph2OnStart = true;
     [SerializeField] private bool _autoCloseTelegraph2OnExit = true;
@@ -44,8 +44,8 @@ public class TelegraphInteractionTrigger : MonoBehaviour
 
     [Header("Result Canvas On Telegraph")]
     [SerializeField] private GameObject _telegraphResultCanvasRoot;
-    [SerializeField] private Text _telegraphResultTitleText;
-    [SerializeField] private Text _telegraphResultInfoText;
+    [SerializeField] private TMP_Text _telegraphResultTitleText;
+    [SerializeField] private TMP_Text _telegraphResultInfoText;
     [SerializeField] private bool _forceHideResultCanvasOnStart = true;
 
     [Header("Code Input")]

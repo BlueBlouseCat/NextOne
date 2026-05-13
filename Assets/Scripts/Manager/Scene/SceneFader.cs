@@ -1,6 +1,6 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SceneFader : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class SceneFader : MonoBehaviour
 
     [Header("Message")]
     [SerializeField] private GameObject _messageRoot;
-    [SerializeField] private Text _messageText;
+    [SerializeField] private TMP_Text _messageText;
     [SerializeField] private CanvasGroup _messageCanvasGroup;
     [SerializeField] private float _messageHoldBeforeLoad = 0.6f;
     [SerializeField] private float _messageHoldAfterLoad = 0.35f;

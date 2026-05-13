@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,8 +12,8 @@ public class InventoryUI : MonoBehaviour
 
     [Header("Popup")]
     [SerializeField] private GameObject _popupRoot;
-    [SerializeField] private Text _titleText;
-    [SerializeField] private Text _descText;
+    [SerializeField] private TMP_Text _titleText;
+    [SerializeField] private TMP_Text _descText;
     [SerializeField] private GameObject _pickupButtonRoot;
 
     [Header("Bag")]

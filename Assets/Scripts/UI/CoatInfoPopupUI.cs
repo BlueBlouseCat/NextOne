@@ -1,14 +1,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
+using TMPro;
 
 public class CoatInfoPopupUI : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private GameObject _root;
-    [SerializeField] private Text _titleText;
-    [SerializeField] private Text _descText;
+    [SerializeField] private TMP_Text _titleText;
+    [SerializeField] private TMP_Text _descText;
 
     private bool _ignoreCloseUntilMouseRelease;
 

@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class DialogueUI : MonoBehaviour
 {
@@ -7,14 +7,14 @@ public class DialogueUI : MonoBehaviour
 
     [Header("Other Box")]
     [SerializeField] private GameObject _otherBox;
-    [SerializeField] private Text _otherText;
+    [SerializeField] private TMP_Text _otherText;
 
     [Header("Player Box")]
     [SerializeField] private GameObject _playerBox;
-    [SerializeField] private Text _playerText;
+    [SerializeField] private TMP_Text _playerText;
 
     [Header("Optional")]
-    [SerializeField] private Text _continueHintText;
+    [SerializeField] private TMP_Text _continueHintText;
 
     public bool IsOpen => _root != null && _root.activeSelf;
 

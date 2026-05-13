@@ -1,5 +1,6 @@
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -22,8 +23,8 @@ public class EndSceneTypewriter : MonoBehaviour
     }
 
     [Header("UI")]
-    [SerializeField] private Text _targetText;
-    [SerializeField] private Text _continueHintText;
+    [SerializeField] private TMP_Text _targetText;
+    [SerializeField] private TMP_Text _continueHintText;
     [SerializeField] private Image _blackOverlay;
 
     [Header("First Group")]
