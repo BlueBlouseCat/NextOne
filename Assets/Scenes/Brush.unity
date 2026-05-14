@@ -797,7 +797,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "- \u6309\u201CF\u201D\u952E\u7EE7\u7EED -"
+  m_text: "- \u6309\"F\"\u952E\u7EE7\u7EED -"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}
   m_sharedMaterial: {fileID: 177640095862093432, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}

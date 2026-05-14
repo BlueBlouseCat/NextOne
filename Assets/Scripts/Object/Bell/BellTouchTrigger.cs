@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using Spine;
 using Spine.Unity;
@@ -22,6 +23,13 @@ public class BellTouchTrigger : MonoBehaviour
     [SerializeField] private Collider2D _platformCollider;
     [SerializeField] private Collider2D _backBlockCollider;
 
+    [Header("Safe Boarding")]
+    [SerializeField] private Collider2D _rideSafeZoneTrigger;
+    [SerializeField] private Transform _boardingStandPoint;
+    [SerializeField] private float _alignSpeed = 6f;
+    [SerializeField] private float _alignStopDistance = 0.02f;
+    [SerializeField] private bool _lockPlayerXAfterSnap = true;
+
     [Header("Door Tween")]
     [SerializeField] private float _doorOpenScaleX = 0.2f;
     [SerializeField] private float _doorClosedScaleX = 1f;
@@ -30,12 +38,8 @@ public class BellTouchTrigger : MonoBehaviour
     [SerializeField] private Ease _doorOpenEase = Ease.OutCubic;
     [SerializeField] private Ease _doorCloseEase = Ease.OutCubic;
 
-    [Header("Stand Check")]
-    [SerializeField] private float _topContactTolerance = 0.2f;
-    [SerializeField] private float _minHorizontalOverlap = 0.05f;
-
     [Header("Ride")]
-    [SerializeField] private float _elevatorMoveSpeed = 1.2f;
+    [SerializeField] private float _elevatorMoveSpeed = 2f;
     [SerializeField] private float _stopPlayerY = 5.4f;
 
     [Header("Scene")]
@@ -60,6 +64,10 @@ public class BellTouchTrigger : MonoBehaviour
     private float _cachedGravityScale;
     private bool _cachedGravityValid;
 
+    private RigidbodyConstraints2D _cachedConstraints;
+    private bool _cachedConstraintsValid;
+    private bool _playerXFrozen;
+
     private void Awake()
     {
         if (_skeletonAnimation == null)
@@ -71,27 +79,6 @@ public class BellTouchTrigger : MonoBehaviour
 
         if (_elevatorRoot == null)
             _elevatorRoot = transform.parent;
-
-        if (_doorTransform == null && _elevatorRoot != null)
-        {
-            Transform door = _elevatorRoot.Find("sense_laoshudong5_diantimen_0");
-            if (door != null)
-                _doorTransform = door;
-        }
-
-        if (_platformCollider == null && _elevatorRoot != null)
-        {
-            Transform platform = _elevatorRoot.Find("sense_laoshudong5_dianti1");
-            if (platform != null)
-                _platformCollider = platform.GetComponent<Collider2D>();
-        }
-
-        if (_backBlockCollider == null && _elevatorRoot != null)
-        {
-            Transform backBlock = _elevatorRoot.Find("sense_laoshudong5_dianti2(back)");
-            if (backBlock != null)
-                _backBlockCollider = backBlock.GetComponent<Collider2D>();
-        }
     }
 
     private void Update()
@@ -101,8 +88,8 @@ public class BellTouchTrigger : MonoBehaviour
         if (!_doorOpened) return;
         if (_ridePreparing || _rideStarted || _sceneLoadRequested) return;
 
-        if (IsPlayerStandingOnTopOfPlatform())
-            CloseDoorThenStartRide();
+        if (CanStartRide())
+            StartCoroutine(BoardAndRideRoutine());
     }
 
     private void FixedUpdate()
@@ -203,19 +190,112 @@ public class BellTouchTrigger : MonoBehaviour
             });
     }
 
-    private void CloseDoorThenStartRide()
+    private bool CanStartRide()
     {
-        if (_ridePreparing)
-            return;
+        if (!IsPlayerTouchingPlatform())
+            return false;
 
+        if (!IsPlayerInsideRideSafeZone())
+            return false;
+
+        return true;
+    }
+
+    private bool IsPlayerTouchingPlatform()
+    {
+        if (_platformCollider == null || _playerCollider == null)
+            return false;
+
+        return _platformCollider.IsTouching(_playerCollider);
+    }
+
+    private bool IsPlayerInsideRideSafeZone()
+    {
+        if (_rideSafeZoneTrigger == null || _playerCollider == null)
+            return false;
+
+        Bounds safe = _rideSafeZoneTrigger.bounds;
+        Bounds player = _playerCollider.bounds;
+
+        bool overlapX = safe.min.x <= player.max.x && safe.max.x >= player.min.x;
+        bool overlapY = safe.min.y <= player.max.y && safe.max.y >= player.min.y;
+
+        return overlapX && overlapY;
+    }
+
+
+    private IEnumerator BoardAndRideRoutine()
+    {
         _ridePreparing = true;
 
+        ResolvePlayerReferences();
+        if (_player == null)
+        {
+            _ridePreparing = false;
+            yield break;
+        }
+
+        LockPlayerForRide();
+
+        yield return AlignPlayerToStandPoint();
+
+        if (_player == null)
+        {
+            _ridePreparing = false;
+            RestorePlayerState();
+            yield break;
+        }
+
+        SnapPlayerToStandPointImmediate();
+
+        if (_lockPlayerXAfterSnap)
+            FreezePlayerX();
+
+        yield return CloseDoorRoutine();
+
+        _doorOpened = false;
+        _ridePreparing = false;
+        _rideStarted = true;
+    }
+
+    private IEnumerator AlignPlayerToStandPoint()
+    {
+        if (_boardingStandPoint == null || _player == null)
+            yield break;
+
+        while (_player != null)
+        {
+            Vector2 current = GetPlayerPosition();
+            Vector2 target = _boardingStandPoint.position;
+            float distance = Vector2.Distance(current, target);
+
+            if (distance <= _alignStopDistance)
+                break;
+
+            Vector2 next = Vector2.MoveTowards(current, target, _alignSpeed * Time.fixedDeltaTime);
+            SetPlayerPosition(next);
+
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    private void SnapPlayerToStandPointImmediate()
+    {
+        if (_player == null || _boardingStandPoint == null)
+            return;
+
+        SetPlayerPosition(_boardingStandPoint.position);
+    }
+
+    private IEnumerator CloseDoorRoutine()
+    {
         if (_doorTransform == null || _doorCloseDuration <= 0f)
         {
             SetDoorScaleX(_doorClosedScaleX);
-            BeginRide();
-            return;
+            yield break;
         }
+
+        bool completed = false;
 
         KillDoorTween();
 
@@ -225,24 +305,11 @@ public class BellTouchTrigger : MonoBehaviour
             .OnComplete(() =>
             {
                 _doorTween = null;
-                BeginRide();
+                completed = true;
             });
-    }
 
-    private void BeginRide()
-    {
-        ResolvePlayerReferences();
-
-        if (_player == null)
-        {
-            _ridePreparing = false;
-            return;
-        }
-
-        LockPlayerForRide();
-        _doorOpened = false;
-        _ridePreparing = false;
-        _rideStarted = true;
+        while (!completed)
+            yield return null;
     }
 
     private void MoveElevatorAndPlayerUp()
@@ -253,31 +320,24 @@ public class BellTouchTrigger : MonoBehaviour
             return;
         }
 
-        float remainingY = _stopPlayerY - _player.position.y;
-        if (remainingY <= 0f)
+        if (GetPlayerY() >= _stopPlayerY)
         {
             FinishRide();
             return;
         }
 
+        float remainingY = _stopPlayerY - GetPlayerY();
         float stepY = Mathf.Min(_elevatorMoveSpeed * Time.fixedDeltaTime, remainingY);
         Vector3 delta = new Vector3(0f, stepY, 0f);
 
         _elevatorRoot.position += delta;
 
-        if (_playerRigidbody != null)
-        {
-            Vector2 currentVelocity = _playerRigidbody.velocity;
-            _playerRigidbody.velocity = new Vector2(currentVelocity.x, 0f);
-            _playerRigidbody.angularVelocity = 0f;
-            _playerRigidbody.MovePosition(_playerRigidbody.position + new Vector2(0f, stepY));
-        }
+        if (_boardingStandPoint != null)
+            SetPlayerPosition(_boardingStandPoint.position);
         else
-        {
-            _player.position += delta;
-        }
+            SetPlayerPosition(GetPlayerPosition() + new Vector2(0f, stepY));
 
-        if (_player.position.y >= _stopPlayerY - 0.001f)
+        if (GetPlayerY() >= _stopPlayerY - 0.001f)
             FinishRide();
     }
 
@@ -293,7 +353,8 @@ public class BellTouchTrigger : MonoBehaviour
         if (_sceneLoadRequested) return;
         _sceneLoadRequested = true;
 
-        if (string.IsNullOrWhiteSpace(_targetScene)) return;
+        if (string.IsNullOrWhiteSpace(_targetScene))
+            return;
 
         if (GameManager.Instance != null)
         {
@@ -318,32 +379,19 @@ public class BellTouchTrigger : MonoBehaviour
         SceneManager.LoadScene(_targetScene);
     }
 
-    private bool IsPlayerStandingOnTopOfPlatform()
-    {
-        if (_platformCollider == null || _playerCollider == null)
-            return false;
-
-        if (!_platformCollider.IsTouching(_playerCollider))
-            return false;
-
-        Bounds platformBounds = _platformCollider.bounds;
-        Bounds playerBounds = _playerCollider.bounds;
-
-        float verticalGap = Mathf.Abs(playerBounds.min.y - platformBounds.max.y);
-        bool centerAbovePlatform = playerBounds.center.y >= platformBounds.center.y;
-        bool closeToTopSurface = verticalGap <= _topContactTolerance;
-
-        float overlapMinX = Mathf.Max(playerBounds.min.x, platformBounds.min.x);
-        float overlapMaxX = Mathf.Min(playerBounds.max.x, platformBounds.max.x);
-        bool hasHorizontalOverlap = (overlapMaxX - overlapMinX) > _minHorizontalOverlap;
-
-        return centerAbovePlatform && closeToTopSurface && hasHorizontalOverlap;
-    }
-
     private void ResolvePlayerReferences()
     {
-        if (_player == null && GameManager.Instance != null)
-            _player = GameManager.Instance.CurrentPlayer;
+        if (_player == null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.CurrentPlayer != null)
+                _player = GameManager.Instance.CurrentPlayer;
+            else
+            {
+                GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
+                if (playerObject != null)
+                    _player = playerObject.transform;
+            }
+        }
 
         if (_player == null)
             return;
@@ -373,29 +421,84 @@ public class BellTouchTrigger : MonoBehaviour
     private void LockPlayerForRide()
     {
         if (_playerMovement != null)
+        {
+            _playerMovement.SetExternalInputLocked(true);
             _playerMovement.SetJumpInputLocked(true);
+        }
 
         if (_playerRigidbody != null)
         {
             _cachedGravityScale = _playerRigidbody.gravityScale;
             _cachedGravityValid = true;
+
+            _playerRigidbody.velocity = Vector2.zero;
             _playerRigidbody.angularVelocity = 0f;
             _playerRigidbody.gravityScale = 0f;
         }
     }
 
+    private void FreezePlayerX()
+    {
+        if (_playerRigidbody == null || _playerXFrozen)
+            return;
+
+        _cachedConstraints = _playerRigidbody.constraints;
+        _cachedConstraintsValid = true;
+
+        _playerRigidbody.constraints = _cachedConstraints | RigidbodyConstraints2D.FreezePositionX;
+        _playerXFrozen = true;
+    }
+
     private void RestorePlayerState()
     {
         if (_playerMovement != null)
+        {
+            _playerMovement.SetExternalInputLocked(false);
             _playerMovement.SetJumpInputLocked(false);
+        }
 
         if (_playerRigidbody != null)
         {
-            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0f);
+            _playerRigidbody.velocity = Vector2.zero;
             _playerRigidbody.angularVelocity = 0f;
 
             if (_cachedGravityValid)
                 _playerRigidbody.gravityScale = _cachedGravityScale;
+
+            if (_playerXFrozen && _cachedConstraintsValid)
+                _playerRigidbody.constraints = _cachedConstraints;
+        }
+
+        _playerXFrozen = false;
+        _cachedConstraintsValid = false;
+    }
+
+    private Vector2 GetPlayerPosition()
+    {
+        if (_playerRigidbody != null)
+            return _playerRigidbody.position;
+
+        return _player != null
+            ? (Vector2)_player.position
+            : Vector2.zero;
+    }
+
+    private float GetPlayerY()
+    {
+        return _playerRigidbody != null ? _playerRigidbody.position.y : _player.position.y;
+    }
+
+    private void SetPlayerPosition(Vector2 targetPosition)
+    {
+        if (_playerRigidbody != null)
+        {
+            _playerRigidbody.velocity = Vector2.zero;
+            _playerRigidbody.angularVelocity = 0f;
+            _playerRigidbody.MovePosition(targetPosition);
+        }
+        else if (_player != null)
+        {
+            _player.position = new Vector3(targetPosition.x, targetPosition.y, _player.position.z);
         }
     }
 
@@ -438,4 +541,5 @@ public class BellTouchTrigger : MonoBehaviour
         _skeletonAnimation.Skeleton.SetToSetupPose();
         _skeletonAnimation.AnimationState.Apply(_skeletonAnimation.Skeleton);
     }
+
 }
