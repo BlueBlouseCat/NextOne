@@ -20,11 +20,23 @@ public class VoiceLeaf : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public float Percent;
 
-    void Awake()
+    void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         parentRect = rectTransform.parent as RectTransform;
 
+        Canvas.ForceUpdateCanvases();
+        RefreshBounds();
+        UpdatePercentAndFill();
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        RefreshBounds();
+    }
+
+    private void RefreshBounds()
+    {
         minX = parentRect.InverseTransformPoint(leftBound.position).x;
         maxX = parentRect.InverseTransformPoint(rightBound.position).x;
 
@@ -34,11 +46,7 @@ public class VoiceLeaf : MonoBehaviour, IBeginDragHandler, IDragHandler
         percentRightX = rightPercentRef != null
             ? parentRect.InverseTransformPoint(rightPercentRef.position).x
             : maxX;
-
-        UpdatePercentAndFill();
     }
-
-    public void OnBeginDrag(PointerEventData eventData) { }
 
     public void OnDrag(PointerEventData eventData)
     {
