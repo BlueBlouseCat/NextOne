@@ -101,14 +101,13 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
         {
             if (_ignoreAdvanceUntilKeyRelease)
             {
-                if (Keyboard.current == null || !Keyboard.current.fKey.isPressed)
+                if (!GameplayInputUtil.InteractHeld())
                     _ignoreAdvanceUntilKeyRelease = false;
 
                 return;
             }
 
-            if (Keyboard.current == null) return;
-            if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+            if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
             AdvanceDialogue();
             return;
@@ -204,19 +203,7 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
 
     private bool WasRequiredSlotPressedThisFrame(int slotIndex)
     {
-        if (Keyboard.current == null) return false;
-
-        switch (slotIndex)
-        {
-            case 0:
-                return Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame;
-            case 1:
-                return Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame;
-            case 2:
-                return Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame;
-            default:
-                return false;
-        }
+        return GameplayInputUtil.SlotPressedThisFrame(slotIndex);
     }
 
     private void TryDeliverBread()

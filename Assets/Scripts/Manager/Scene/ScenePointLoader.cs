@@ -59,8 +59,7 @@ public class ScenePointLoader : MonoBehaviour
         UpdateRangeState(inRange);
 
         if (!inRange) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         HideHint();
 

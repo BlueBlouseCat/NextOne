@@ -29,8 +29,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (_sceneFader == null)
-            _sceneFader = FindObjectOfType<SceneFader>();
+        TryCacheSceneFader();
     }
 
     private void OnEnable()
@@ -157,6 +156,8 @@ public class GameManager : MonoBehaviour
         if (_isSceneLoading) return;
         if (string.IsNullOrEmpty(sceneName)) return;
 
+        TryCacheSceneFader();
+
         if (_sceneFader == null)
         {
             if (string.IsNullOrEmpty(spawnPointId))
@@ -178,6 +179,8 @@ public class GameManager : MonoBehaviour
     {
         if (_isSceneLoading) return;
         if (string.IsNullOrEmpty(sceneName)) return;
+
+        TryCacheSceneFader();
 
         if (_sceneFader == null)
         {
@@ -241,5 +244,25 @@ public class GameManager : MonoBehaviour
     public bool HasFlag(string key)
     {
         return GetFlag(key);
+    }
+
+    public void ResetRuntimeState()
+    {
+        StopAllCoroutines();
+
+        _isSceneLoading = false;
+        _isFadingSceneLoad = false;
+        _nextSpawnPointId = null;
+        LastSpawnPointId = null;
+        CurrentPlayer = null;
+
+        _visitedScenes.Clear();
+        _flags.Clear();
+    }
+
+    private void TryCacheSceneFader()
+    {
+        if (_sceneFader == null)
+            _sceneFader = FindObjectOfType<SceneFader>();
     }
 }

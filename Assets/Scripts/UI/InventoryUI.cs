@@ -9,12 +9,13 @@ public class InventoryUI : MonoBehaviour
 
     [Header("Interact")]
     [SerializeField] private GameObject _interactHintRoot;
+    [SerializeField] private TMP_Text _interactHintText;
 
     [Header("Popup")]
     [SerializeField] private GameObject _popupRoot;
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descText;
-    [SerializeField] private GameObject _pickupButtonRoot;
+    [SerializeField] private TMP_Text _popupHintText;
 
     [Header("Bag")]
     [SerializeField] private Image[] _slotIcons;
@@ -30,6 +31,7 @@ public class InventoryUI : MonoBehaviour
     private bool _isSubscribed;
 
     public bool IsPopupOpen => _popupRoot != null && _popupRoot.activeSelf;
+    public bool HasPendingPickup => _pendingItem != null;
 
     private void Awake()
     {
@@ -137,38 +139,19 @@ public class InventoryUI : MonoBehaviour
         _slotRects[_jumpSlot].anchoredPosition = pos;
     }
 
-    public void ShowInteractHint(bool show)
+    public void ShowInteractHint(bool show, string hintText = null)
     {
+        if (_interactHintText != null && !string.IsNullOrWhiteSpace(hintText))
+            _interactHintText.text = hintText;
+
         if (_interactHintRoot != null)
             _interactHintRoot.SetActive(show && !GlobalInteractionLock.IsLocked);
     }
 
-    public void OpenPickupPopup(PlayerItemController controller, WorldItemInteractable item)
-    {
-        if (item == null || item.Item == null) return;
-
-        _pendingController = controller;
-        _pendingItem = item;
-
-        if (_titleText != null)
-            _titleText.text = item.Item.displayName;
-
-        if (_descText != null)
-            _descText.text = item.Item.description;
-
-        if (_pickupButtonRoot != null)
-            _pickupButtonRoot.SetActive(true);
-
-        if (_popupRoot != null)
-            _popupRoot.SetActive(true);
-
-        ShowInteractHint(false);
-    }
-
-    public void OpenInspectPopup(string title, string desc, PlayerItemController controller)
+    public void OpenInspectPopup(string title, string desc, PlayerItemController controller, WorldItemInteractable pendingItem = null)
     {
         _pendingController = controller;
-        _pendingItem = null;
+        _pendingItem = pendingItem;
 
         if (_titleText != null)
             _titleText.text = title;
@@ -176,8 +159,8 @@ public class InventoryUI : MonoBehaviour
         if (_descText != null)
             _descText.text = desc;
 
-        if (_pickupButtonRoot != null)
-            _pickupButtonRoot.SetActive(false);
+        if (_popupHintText != null)
+            _popupHintText.text = pendingItem != null ? ProjectInteractionHints.PopupPickup : ProjectInteractionHints.PopupClose;
 
         if (_popupRoot != null)
             _popupRoot.SetActive(true);
@@ -185,18 +168,25 @@ public class InventoryUI : MonoBehaviour
         ShowInteractHint(false);
     }
 
+    public bool ConfirmPendingPickup()
+    {
+        if (_pendingController == null || _pendingItem == null)
+            return false;
+
+        _pendingController.ConfirmPickup(_pendingItem);
+        return true;
+    }
+
     public void ClosePickupPopup()
     {
         _pendingController = null;
         _pendingItem = null;
 
+        if (_popupHintText != null)
+            _popupHintText.text = string.Empty;
+
         if (_popupRoot != null)
             _popupRoot.SetActive(false);
-    }
-
-    public void OnClickPickup()
-    {
-        _pendingController?.ConfirmPickup(_pendingItem);
     }
 
     public void OnClickClose()

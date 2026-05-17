@@ -158,9 +158,21 @@ MonoBehaviour:
     m_ActionId: fb5ab9d3-8822-41ea-818d-21e2d2cdff2c
     m_ActionName: UI/Submit[/Keyboard/enter]
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 26ad177d-0655-4ca4-b0eb-950696a24b5b
-    m_ActionName: UI/Cancel[/Keyboard/escape]
+      m_Calls:
+      - m_Target: {fileID: 5102239713426698163}
+        m_TargetAssemblyTypeName: PlayerItemController, Assembly-CSharp
+        m_MethodName: OnCancel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: e8d2ab4e-e497-4145-8b7b-fdbc45689733
+    m_ActionName: Player/Cancel
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 78594120-2e75-4962-bfac-b61ca951813f
@@ -220,7 +232,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 62e88b1c-f93c-4ad2-9ec5-f871e16eb126
-    m_ActionName: Player/Interact[/Keyboard/f]
+    m_ActionName: Player/Interact
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5102239713426698163}
@@ -269,6 +281,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 55343950-40cb-42fd-9d73-89d4ee890328
     m_ActionName: Player/UseSlot3[/Keyboard/3]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5102239713426698163}
+        m_TargetAssemblyTypeName: PlayerItemController, Assembly-CSharp
+        m_MethodName: OnPickup
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: b23bd162-baee-4826-8eb0-2453b5afb9c1
+    m_ActionName: Player/Pickup
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -330,6 +358,7 @@ MonoBehaviour:
   _inventory: {fileID: 0}
   _inventoryUI: {fileID: 0}
   _itemPreviewViewer: {fileID: 0}
+  _pauseMenuController: {fileID: 0}
 --- !u!1 &1875674490717724607
 GameObject:
   m_ObjectHideFlags: 0

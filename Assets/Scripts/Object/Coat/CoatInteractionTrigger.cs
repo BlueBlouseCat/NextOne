@@ -84,8 +84,7 @@ public class CoatInteractionTrigger : MonoBehaviour
     private void HandleFInput(bool hasFocus)
     {
         if (!hasFocus) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
         if (IsPopupOpen()) return;
 
         if (!IsCoat2Active())

@@ -94,8 +94,7 @@ public class BrushCatDialogueTrigger : MonoBehaviour
 
         UpdateRangeState(inRange);
 
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         if (_isDialogueRunning)
         {

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class EndSceneTypewriter : MonoBehaviour
 {
+    private const string LegacyContinueHint = "Press F / Space";
+
     [System.Serializable]
     public class Page
     {
@@ -270,7 +272,7 @@ public class EndSceneTypewriter : MonoBehaviour
         if (_continueHintText == null) return;
 
         _continueHintText.gameObject.SetActive(visible);
-        _continueHintText.text = visible ? _continueHint : string.Empty;
+        _continueHintText.text = visible ? GetResolvedContinueHint() : string.Empty;
     }
 
     private bool ReadAdvancePressedThisFrame()
@@ -282,18 +284,23 @@ public class EndSceneTypewriter : MonoBehaviour
         Mouse mouse = Mouse.current;
 
         bool keyboardPressed =
-            keyboard != null &&
-            (
-                keyboard.fKey.wasPressedThisFrame ||
-                keyboard.spaceKey.wasPressedThisFrame ||
-                keyboard.enterKey.wasPressedThisFrame
-            );
+            GameplayInputUtil.InteractPressedThisFrame() ||
+            GameplayInputUtil.SubmitPressedThisFrame() ||
+            (keyboard != null && keyboard.spaceKey.wasPressedThisFrame);
 
         bool mousePressed =
             mouse != null &&
             mouse.leftButton.wasPressedThisFrame;
 
         return keyboardPressed || mousePressed;
+    }
+
+    private string GetResolvedContinueHint()
+    {
+        if (string.IsNullOrWhiteSpace(_continueHint) || _continueHint == LegacyContinueHint)
+            return $"Press {GameplayInputUtil.GetInteractDisplayName()} / Space";
+
+        return _continueHint;
     }
 
     private object CreateWaitInstruction(float seconds)

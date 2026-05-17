@@ -114,7 +114,7 @@ public class CrowDialogueTrigger : MonoBehaviour
         {
             HideHint();
 
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            if (GameplayInputUtil.InteractPressedThisFrame())
                 AdvanceDialogue();
 
             return;
@@ -127,8 +127,7 @@ public class CrowDialogueTrigger : MonoBehaviour
 
         if (!inRange) return;
         if (_dialogueUI == null) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         StartDialogue();
     }

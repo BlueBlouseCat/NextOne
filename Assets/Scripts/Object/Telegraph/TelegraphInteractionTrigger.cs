@@ -221,10 +221,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         if (!IsResultCanvasActive())
             return false;
 
-        if (Keyboard.current == null)
-            return false;
-
-        if (!Keyboard.current.fKey.wasPressedThisFrame)
+        if (!GameplayInputUtil.InteractPressedThisFrame())
             return false;
 
         SetResultCanvasActive(false);
@@ -234,8 +231,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     private void HandleFInput(bool hasFocus, bool popupOpen, bool resultCanvasOpen)
     {
         if (!hasFocus) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
         if (popupOpen) return;
         if (resultCanvasOpen) return;
         if (_waitingRingCompleteResult) return;
