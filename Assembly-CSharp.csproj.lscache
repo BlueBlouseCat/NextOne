@@ -69,6 +69,7 @@ Assets/Scripts/Dialogue/
  CrowDialogueTrigger.cs
  DialogueLine.cs
  DialogueUI.cs
+ LiangyilouDialogueTrigger.cs
 Assets/Scripts/Item/
  Describtion/ItemDefinition.cs
  InspectableTrigger.cs
@@ -101,6 +102,7 @@ Assets/Scripts/Object/
   PlayerBubbleFollower.cs
  Cat/
   CatController.cs
+  LiangyilouSpineController.cs
   MotherCatSpineController.cs
   OutsideCatsActivator.cs
  ClimbZone.cs
@@ -133,6 +135,7 @@ Assets/Scripts/Object/
   MouseIdleController.cs
   MouseSpineController.cs
   MouseSpineController2.cs
+ OutsideInteractionUnlockBySpawn.cs
  Painting/
   PaintingRotateInteractable.cs
   PaintingRotationPuzzle.cs

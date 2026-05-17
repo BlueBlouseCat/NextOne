@@ -252,54 +252,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &205997950
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 205997952}
-  - component: {fileID: 205997951}
-  m_Layer: 0
-  m_Name: BrushKeyVisitTracker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &205997951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 205997950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edf0ae2c0fbda3148a5dd4fc6e1f84c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentScene: Brush
-  _keyCollectedFlag: item.house_key.collected
-  _enteredBrushAfterKeyFlag: entered_brush_after_key
-  _catsActivatedFlag: outside_cats_activated
---- !u!4 &205997952
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 205997950}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.2115535, y: -5.999897, z: -0.04824362}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &284574122
 GameObject:
   m_ObjectHideFlags: 0
@@ -1870,6 +1822,5 @@ SceneRoots:
   - {fileID: 1199070765}
   - {fileID: 506622565}
   - {fileID: 1401444208}
-  - {fileID: 205997952}
   - {fileID: 109989003}
   - {fileID: 1438311443}

@@ -301,7 +301,6 @@ Library/ScriptAssemblies/
  UnityEngine.TestRunner.dll
  UnityEngine.UI.dll
 Temp/bin/Debug/
- spine-csharp.dll
  spine-unity-examples.dll
  spine-unity.dll
 
