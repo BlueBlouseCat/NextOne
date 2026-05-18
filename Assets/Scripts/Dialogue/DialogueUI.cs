@@ -18,7 +18,7 @@ public class DialogueUI : MonoBehaviour
 
     public bool IsOpen => _root != null && _root.activeSelf;
 
-    private const string DefaultContinueHint = "- 按 F 键继续 -";
+    private string DefaultContinueHint => ProjectInteractionHints.Continue;
 
     private void Awake()
     {

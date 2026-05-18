@@ -90,7 +90,7 @@ public class CrowDeliveryTrigger : MonoBehaviour
 
         if (_isDialogueRunning)
         {
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            if (GameplayInputUtil.InteractPressedThisFrame())
                 AdvanceDialogue();
 
             return;
@@ -128,7 +128,6 @@ public class CrowDeliveryTrigger : MonoBehaviour
             HideDeliveryHint();
 
         if (!hasItem) return;
-        if (Keyboard.current == null) return;
         if (!WasRequiredSlotPressedThisFrame()) return;
 
         TryDeliver();
@@ -152,22 +151,10 @@ public class CrowDeliveryTrigger : MonoBehaviour
 
     private bool WasRequiredSlotPressedThisFrame()
     {
-        if (Keyboard.current == null) return false;
-
         int slot = GetCurrentRequiredItemSlot();
         if (slot < 0) return false;
 
-        switch (slot)
-        {
-            case 0:
-                return Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame;
-            case 1:
-                return Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame;
-            case 2:
-                return Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame;
-            default:
-                return false;
-        }
+        return GameplayInputUtil.SlotPressedThisFrame(slot);
     }
 
     private void TryDeliver()

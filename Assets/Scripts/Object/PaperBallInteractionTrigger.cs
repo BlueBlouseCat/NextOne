@@ -80,8 +80,7 @@ public class PaperBallInteractionTrigger : MonoBehaviour
 
         if (!_playerInRange) return;
         if (popupOpen) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         AdvanceInteraction();
     }

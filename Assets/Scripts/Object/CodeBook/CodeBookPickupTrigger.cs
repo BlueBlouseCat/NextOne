@@ -67,8 +67,7 @@ public class CodeBookPickupTrigger : MonoBehaviour
             HideHint();
 
         if (!_playerInRange) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         PickupCodeBook();
     }

@@ -91,8 +91,7 @@ public class PaperBallToggleInteractable : MonoBehaviour
         ApplyFocus(hasFocus);
 
         if (!hasFocus) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         if (InventoryUI.Instance != null &&
             InventoryUI.Instance.IsPopupOpen &&

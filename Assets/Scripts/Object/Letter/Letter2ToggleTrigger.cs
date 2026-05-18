@@ -81,8 +81,7 @@ public class Letter2ToggleTrigger : MonoBehaviour
             HideHint();
 
         if (!hasFocus) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         ToggleLetter2();
     }

@@ -86,14 +86,13 @@ public class MouseBlockedTrigger : MonoBehaviour
         {
             if (_ignoreAdvanceUntilKeyRelease)
             {
-                if (Keyboard.current == null || !Keyboard.current.fKey.isPressed)
+                if (!GameplayInputUtil.InteractHeld())
                     _ignoreAdvanceUntilKeyRelease = false;
 
                 return;
             }
 
-            if (Keyboard.current == null) return;
-            if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+            if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
             AdvanceDialogue();
             return;
@@ -111,8 +110,7 @@ public class MouseBlockedTrigger : MonoBehaviour
             HideHint();
 
         if (!_playerInRange) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         StartDialogue();
     }

@@ -10,6 +10,7 @@ public class CrowDialogueTrigger : MonoBehaviour
     [Header("Crow")]
     [SerializeField] private GameObject _crowRoot;
     [SerializeField] private CrowSpineController _crowSpine;
+    //[SerializeField] private BoxCollider2D _crowBox;
 
     [Header("Trigger Point")]
     [SerializeField] private Vector2 _dialoguePoint = new Vector2(-4.98f, 6.43f);
@@ -114,7 +115,7 @@ public class CrowDialogueTrigger : MonoBehaviour
         {
             HideHint();
 
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            if (GameplayInputUtil.InteractPressedThisFrame())
                 AdvanceDialogue();
 
             return;
@@ -127,8 +128,7 @@ public class CrowDialogueTrigger : MonoBehaviour
 
         if (!inRange) return;
         if (_dialogueUI == null) return;
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
         StartDialogue();
     }
@@ -190,6 +190,7 @@ public class CrowDialogueTrigger : MonoBehaviour
 
         _crowSpine?.PlayIdle();
         HideHint();
+        //_crowBox.enabled = false;
     }
 
     private void TriggerFly()

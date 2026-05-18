@@ -10,12 +10,8 @@ public class OutsideCatsActivator : MonoBehaviour
     [SerializeField] private GameObject _catsRoot;
 
     [Header("Flags")]
-    [SerializeField] private string _enteredBrushAfterKeyFlag = "entered_brush_after_key";
+    [SerializeField] private string _keyCollectedFlag = "item.house_key.collected";
     [SerializeField] private string _catsActivatedFlag = "outside_cats_activated";
-
-    [Header("Valid Return Spawn Points")]
-    [SerializeField] private string _brushReturnSpawnPointId = "brush_to_outside";
-    [SerializeField] private string _brush1ReturnSpawnPointId = "brush1_to_outside";
 
     private void Start()
     {
@@ -29,9 +25,14 @@ public class OutsideCatsActivator : MonoBehaviour
 
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != _currentScene) return;
-        if (GameManager.Instance == null) return;
-        if (GameManager.Instance.IsLoadingScene()) return;
+        if (SceneManager.GetActiveScene().name != _currentScene)
+            return;
+
+        if (GameManager.Instance == null)
+            return;
+
+        if (GameManager.Instance.IsLoadingScene())
+            return;
 
         TryUnlockCats();
         RefreshVisibility();
@@ -39,23 +40,26 @@ public class OutsideCatsActivator : MonoBehaviour
 
     private void TryUnlockCats()
     {
-        if (GameManager.Instance == null) return;
-        if (GameManager.Instance.GetFlag(_catsActivatedFlag)) return;
-        if (!GameManager.Instance.GetFlag(_enteredBrushAfterKeyFlag)) return;
+        if (GameManager.Instance == null)
+            return;
 
-        string lastSpawnPointId = GameManager.Instance.LastSpawnPointId;
-        bool returnedFromBrush =
-            lastSpawnPointId == _brushReturnSpawnPointId ||
-            lastSpawnPointId == _brush1ReturnSpawnPointId;
+        if (GameManager.Instance.GetFlag(_catsActivatedFlag))
+            return;
 
-        if (!returnedFromBrush) return;
+        if (string.IsNullOrWhiteSpace(_keyCollectedFlag))
+            return;
+
+        bool hasCollectedKey = GameManager.Instance.GetFlag(_keyCollectedFlag);
+        if (!hasCollectedKey)
+            return;
 
         GameManager.Instance.SetFlag(_catsActivatedFlag, true);
     }
 
     private void RefreshVisibility()
     {
-        if (_catsRoot == null) return;
+        if (_catsRoot == null)
+            return;
 
         if (SceneManager.GetActiveScene().name != _currentScene)
         {
@@ -69,7 +73,10 @@ public class OutsideCatsActivator : MonoBehaviour
             return;
         }
 
-        bool shouldShowCats = GameManager.Instance.GetFlag(_catsActivatedFlag);
+        bool shouldShowCats =
+            GameManager.Instance.GetFlag(_catsActivatedFlag) ||
+            (!string.IsNullOrWhiteSpace(_keyCollectedFlag) && GameManager.Instance.GetFlag(_keyCollectedFlag));
+
         _catsRoot.SetActive(shouldShowCats);
     }
 }

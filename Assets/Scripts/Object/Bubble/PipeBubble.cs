@@ -13,8 +13,13 @@ public class PipeBubble : MonoBehaviour
     [Header("Timing")]
     [SerializeField] private float _firstBubbleDuration = 1.5f;
 
+    [Header("Optional")]
+    [SerializeField] private bool _playOnlyOnce = true;
+    [SerializeField] private string _playedFlag = "outside_pipe_bubble_played";
+
     private Coroutine _sequenceCoroutine;
     private bool _wasClimbingLastFrame;
+    private bool _hasPlayedThisSession;
 
     private void Awake()
     {
@@ -26,6 +31,7 @@ public class PipeBubble : MonoBehaviour
         HideAllBubbles();
         _wasClimbingLastFrame = false;
         TryResolvePlayer();
+        SyncPlayedStateFromSave();
     }
 
     private void OnDisable()
@@ -64,6 +70,10 @@ public class PipeBubble : MonoBehaviour
 
     private void StartSequence()
     {
+        if (HasAlreadyPlayed())
+            return;
+
+        MarkPlayed();
         StopSequence();
         HideAllBubbles();
         _sequenceCoroutine = StartCoroutine(PlayBubbleSequence());
@@ -107,6 +117,46 @@ public class PipeBubble : MonoBehaviour
     {
         SetBubble1(false);
         SetBubble2(false);
+    }
+
+    private void SyncPlayedStateFromSave()
+    {
+        if (!_playOnlyOnce) return;
+        if (GameManager.Instance == null) return;
+        if (string.IsNullOrWhiteSpace(_playedFlag)) return;
+
+        _hasPlayedThisSession = GameManager.Instance.GetFlag(_playedFlag);
+    }
+
+    private bool HasAlreadyPlayed()
+    {
+        if (!_playOnlyOnce)
+            return false;
+
+        if (_hasPlayedThisSession)
+            return true;
+
+        if (GameManager.Instance == null || string.IsNullOrWhiteSpace(_playedFlag))
+            return false;
+
+        bool played = GameManager.Instance.GetFlag(_playedFlag);
+        if (played)
+            _hasPlayedThisSession = true;
+
+        return played;
+    }
+
+    private void MarkPlayed()
+    {
+        if (!_playOnlyOnce)
+            return;
+
+        _hasPlayedThisSession = true;
+
+        if (GameManager.Instance == null || string.IsNullOrWhiteSpace(_playedFlag))
+            return;
+
+        GameManager.Instance.SetFlag(_playedFlag, true);
     }
 
     private void SetBubble1(bool visible)

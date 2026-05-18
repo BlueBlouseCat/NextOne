@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97ad3dfb745e3b4688353cf9dcb3e43, type: 3}
   m_Name: CodeBook
   m_EditorClassIdentifier: 
-  itemId: 
+  itemId: code_book
   displayName: 
   description: 
   icon: {fileID: 21300000, guid: 8acacc705f2504d4aba74d35e7af5a75, type: 3}
   previewSprite: {fileID: 21300000, guid: 3b1dc8db849891444b7ba01bed821924, type: 3}
+  previewOverlaySprite: {fileID: 0}
+  previewOverlayOffset: {x: 140, y: -40}
+  previewOverlaySizeMultiplier: {x: 1, y: 1}
+  previewOverlayAlpha: 1
   slotIndex: 0
   consumeOnUse: 0
   collectedFlagKey: 

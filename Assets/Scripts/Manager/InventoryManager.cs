@@ -104,4 +104,12 @@ public class InventoryManager : MonoBehaviour
             OnInventoryChanged?.Invoke();
         }
     }
+
+    public void ClearAll()
+    {
+        for (int i = 0; i < _slots.Length; i++)
+            _slots[i] = null;
+
+        OnInventoryChanged?.Invoke();
+    }
 }

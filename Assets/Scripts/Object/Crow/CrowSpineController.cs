@@ -25,6 +25,7 @@ public class CrowSpineController : MonoBehaviour
     private Action _pendingMoveComplete;
     private TrackEntry _pendingLandEntry;
     private bool _disableRootAfterCurrentLand;
+    private bool _playIdleAfterCurrentLand;
 
     private void Awake()
     {
@@ -57,17 +58,27 @@ public class CrowSpineController : MonoBehaviour
 
     public void FlyTo(Vector2 targetWorldPosition, float moveSpeed, Action onComplete = null)
     {
-        StartMove(targetWorldPosition, moveSpeed, onComplete, false, false);
+        StartMove(targetWorldPosition, moveSpeed, onComplete, false, false, false);
     }
 
     public void FlyToAndLand(Vector2 targetWorldPosition, float moveSpeed)
     {
-        StartMove(targetWorldPosition, moveSpeed, null, true, _disableRootOnLandComplete);
+        StartMove(targetWorldPosition, moveSpeed, null, true, _disableRootOnLandComplete, false);
     }
 
     public void FlyToAndLand(Vector2 targetWorldPosition, float moveSpeed, Action onComplete, bool playLandAnimation)
     {
-        StartMove(targetWorldPosition, moveSpeed, onComplete, playLandAnimation, _disableRootOnLandComplete);
+        StartMove(targetWorldPosition, moveSpeed, onComplete, playLandAnimation, _disableRootOnLandComplete, false);
+    }
+
+    public void FlyToAndLand(
+        Vector2 targetWorldPosition,
+        float moveSpeed,
+        Action onComplete,
+        bool playLandAnimation,
+        bool playIdleAfterLand)
+    {
+        StartMove(targetWorldPosition, moveSpeed, onComplete, playLandAnimation, _disableRootOnLandComplete, playIdleAfterLand);
     }
 
     public bool HasFlownAway()
@@ -75,7 +86,13 @@ public class CrowSpineController : MonoBehaviour
         return _hasFlownAway;
     }
 
-    private void StartMove(Vector2 targetWorldPosition, float moveSpeed, Action onComplete, bool playLandAnimation, bool disableRootAfterLand)
+    private void StartMove(
+        Vector2 targetWorldPosition,
+        float moveSpeed,
+        Action onComplete,
+        bool playLandAnimation,
+        bool disableRootAfterLand,
+        bool playIdleAfterLand)
     {
         if (_moveRoutine != null)
             StopCoroutine(_moveRoutine);
@@ -85,6 +102,7 @@ public class CrowSpineController : MonoBehaviour
         _hasFlownAway = true;
         _pendingMoveComplete = onComplete;
         _disableRootAfterCurrentLand = disableRootAfterLand;
+        _playIdleAfterCurrentLand = playIdleAfterLand;
         _moveRoutine = StartCoroutine(MoveRoutine(targetWorldPosition, Mathf.Max(0.01f, moveSpeed), playLandAnimation));
     }
 
@@ -118,7 +136,8 @@ public class CrowSpineController : MonoBehaviour
 
     private void OnLandComplete(TrackEntry entry)
     {
-        if (_pendingLandEntry != entry) return;
+        if (_pendingLandEntry != entry)
+            return;
 
         entry.Complete -= OnLandComplete;
         _pendingLandEntry = null;
@@ -128,6 +147,12 @@ public class CrowSpineController : MonoBehaviour
 
     private void CompleteMove()
     {
+        if (_playIdleAfterCurrentLand && !_disableRootAfterCurrentLand)
+        {
+            _hasFlownAway = false;
+            PlayIdle();
+        }
+
         Action callback = _pendingMoveComplete;
         _pendingMoveComplete = null;
 
@@ -147,6 +172,7 @@ public class CrowSpineController : MonoBehaviour
 
         _pendingMoveComplete = null;
         _disableRootAfterCurrentLand = false;
+        _playIdleAfterCurrentLand = false;
     }
 
     private TrackEntry PlayAnimation(string animName, bool loop, bool restart = false)

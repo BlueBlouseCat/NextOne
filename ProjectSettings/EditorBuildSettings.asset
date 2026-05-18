@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Brush1.unity
     guid: 55015b2be75661548b1531e073936d6b
   - enabled: 1
+    path: Assets/Scenes/CG1.unity
+    guid: 850e4951a1bf21344843385bb4f5ecf7
+  - enabled: 1
     path: Assets/Scenes/House.unity
     guid: e8266aeca2a882546a5b0843c24121f2
   - enabled: 1

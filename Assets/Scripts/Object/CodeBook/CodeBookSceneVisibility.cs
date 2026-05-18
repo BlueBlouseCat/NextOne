@@ -12,8 +12,7 @@ public class CodeBookSceneVisibility : MonoBehaviour
     [Header("Target Root")]
     [SerializeField] private GameObject _targetRoot;
 
-    [Header("Optional Override Flag")]
-    [SerializeField] private string _collectedFlagOverride = "";
+    private bool _subscribedInventoryChanged;
 
     private void Awake()
     {
@@ -23,61 +22,80 @@ public class CodeBookSceneVisibility : MonoBehaviour
 
     private void Start()
     {
+        TrySubscribeInventoryChanged();
         RefreshVisibility();
     }
 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        TrySubscribeInventoryChanged();
         RefreshVisibility();
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnsubscribeInventoryChanged();
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        TrySubscribeInventoryChanged();
         RefreshVisibility();
+    }
+
+    private void TrySubscribeInventoryChanged()
+    {
+        if (_subscribedInventoryChanged) return;
+        if (InventoryManager.Instance == null) return;
+
+        InventoryManager.Instance.OnInventoryChanged += RefreshVisibility;
+        _subscribedInventoryChanged = true;
+    }
+
+    private void UnsubscribeInventoryChanged()
+    {
+        if (!_subscribedInventoryChanged) return;
+
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnInventoryChanged -= RefreshVisibility;
+
+        _subscribedInventoryChanged = false;
     }
 
     [ContextMenu("Refresh Visibility")]
     public void RefreshVisibility()
     {
         if (_targetRoot == null) return;
+        if (!IsInCurrentScene()) return;
 
-        if (!string.IsNullOrWhiteSpace(_currentScene) &&
-            SceneManager.GetActiveScene().name != _currentScene)
-        {
-            return;
-        }
-
-        if (GameManager.Instance == null)
-        {
-            _targetRoot.SetActive(true);
-            return;
-        }
-
-        string collectedFlag = ResolveCollectedFlag();
-        if (string.IsNullOrWhiteSpace(collectedFlag))
-        {
-            _targetRoot.SetActive(true);
-            return;
-        }
-
-        bool alreadyCollected = GameManager.Instance.GetFlag(collectedFlag);
-        _targetRoot.SetActive(!alreadyCollected);
+        bool inInventory = IsCodeBookInInventory();
+        _targetRoot.SetActive(!inInventory);
     }
 
-    private string ResolveCollectedFlag()
+    private bool IsInCurrentScene()
     {
-        if (!string.IsNullOrWhiteSpace(_collectedFlagOverride))
-            return _collectedFlagOverride;
+        if (string.IsNullOrWhiteSpace(_currentScene))
+            return true;
 
-        if (_codeBookItem != null)
-            return _codeBookItem.CollectedFlag;
+        return SceneManager.GetActiveScene().name == _currentScene;
+    }
 
-        return string.Empty;
+    private bool IsCodeBookInInventory()
+    {
+        if (_codeBookItem == null)
+            return false;
+
+        if (InventoryManager.Instance == null)
+            return false;
+
+        if (string.IsNullOrWhiteSpace(_codeBookItem.itemId))
+        {
+            Debug.LogWarning("CodeBookSceneVisibility: _codeBookItem.itemId 为空，无法根据背包判断 CodeBook 显隐。");
+            return false;
+        }
+
+        return InventoryManager.Instance.HasItem(_codeBookItem.itemId);
     }
 }

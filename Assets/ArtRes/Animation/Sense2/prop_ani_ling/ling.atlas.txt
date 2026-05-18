@@ -1,0 +1,11 @@
+ling.png
+size:1024,256
+filter:Linear,Linear
+pma:true
+images/sense_laoshudong5_ling1
+bounds:2,86,165,625
+offsets:1103,455,1920,1080
+rotate:90
+images/sense_laoshudong5_ling2
+bounds:2,2,38,82
+offsets:1168,450,1920,1080

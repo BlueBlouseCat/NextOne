@@ -205,7 +205,13 @@ public class Platform1BranchInteractionTrigger : MonoBehaviour
 
         if (_crowSpine != null && _crowPlatformPoint != null)
         {
-            _crowSpine.FlyToAndLand(_crowPlatformPoint.position, _crowFlyBackSpeed, () => landedOnPlatform = true, true);
+            _crowSpine.FlyToAndLand(
+                _crowPlatformPoint.position,
+                _crowFlyBackSpeed,
+                () => landedOnPlatform = true,
+                true,
+                true
+            );
 
             while (!landedOnPlatform)
                 yield return null;

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class MouseBreadDeliveryTrigger : MonoBehaviour
@@ -17,18 +16,22 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
     [Header("Flags")]
     [SerializeField] private string _requiredDialogueFlag = "mouse_blocked_dialogue_done";
     [SerializeField] private string _deliveryDoneFlag = "mousehole2_bread_delivered";
+    [SerializeField] private string _mouseDisappearedFlag = "mousehole2_mouse_disappeared";
 
     [Header("After Delivery Dialogue")]
     [SerializeField] private DialogueLine[] _deliveryLines;
 
     [Header("After Dialogue")]
+    [SerializeField] private bool _playDisappearAfterDialogue = true;
     [SerializeField] private bool _disableMouseCollidersAfterDialogue = true;
     [SerializeField] private Collider2D[] _mouseCollidersToDisable;
+    [SerializeField] private GameObject _triggerRootToDisable;
 
     private PlayerMovement _playerMovement;
     private bool _playerInRange;
     private bool _slotHintShownByThisScript;
     private bool _deliveryDone;
+    private bool _mouseDisappeared;
     private bool _isSequenceRunning;
     private bool _isDialogueRunning;
     private bool _ignoreAdvanceUntilKeyRelease;
@@ -43,11 +46,15 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
 
         if (_mouseController == null)
             _mouseController = FindObjectOfType<MouseSpineController2>();
+
+        if (_triggerRootToDisable == null)
+            _triggerRootToDisable = gameObject;
     }
 
     private void OnEnable()
     {
         _deliveryDone = GameManager.Instance != null && GameManager.Instance.GetFlag(_deliveryDoneFlag);
+        _mouseDisappeared = GameManager.Instance != null && GameManager.Instance.GetFlag(_mouseDisappearedFlag);
 
         _playerInRange = false;
         _slotHintShownByThisScript = false;
@@ -63,6 +70,13 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
         UnlockPlayer();
         ReleaseGlobalLock();
         ResolvePlayerMovement();
+
+        if (_mouseDisappeared)
+        {
+            DisableMouseCollidersIfNeeded();
+            DisableTriggerRootIfNeeded();
+            return;
+        }
 
         if (_deliveryDone)
             DisableMouseCollidersIfNeeded();
@@ -97,18 +111,26 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
         if (!_deliveryDone)
             _deliveryDone = GameManager.Instance.GetFlag(_deliveryDoneFlag);
 
+        if (!_mouseDisappeared && !string.IsNullOrWhiteSpace(_mouseDisappearedFlag))
+            _mouseDisappeared = GameManager.Instance.GetFlag(_mouseDisappearedFlag);
+
+        if (_mouseDisappeared)
+        {
+            HideSlotHint();
+            return;
+        }
+
         if (_isDialogueRunning)
         {
             if (_ignoreAdvanceUntilKeyRelease)
             {
-                if (Keyboard.current == null || !Keyboard.current.fKey.isPressed)
+                if (!GameplayInputUtil.InteractHeld())
                     _ignoreAdvanceUntilKeyRelease = false;
 
                 return;
             }
 
-            if (Keyboard.current == null) return;
-            if (!Keyboard.current.fKey.wasPressedThisFrame) return;
+            if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
             AdvanceDialogue();
             return;
@@ -152,7 +174,7 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
             HideSlotHint();
 
         if (!hasRequiredItem) return;
-        if (!WasRequiredSlotPressedThisFrame(slotIndex)) return;
+        if (!GameplayInputUtil.SlotPressedThisFrame(slotIndex)) return;
 
         TryDeliverBread();
     }
@@ -176,6 +198,7 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
     {
         if (other == null || !other.CompareTag("Player")) return;
         if (SceneManager.GetActiveScene().name != _currentScene) return;
+        if (_mouseDisappeared) return;
 
         _playerInRange = inRange;
 
@@ -200,23 +223,6 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
         if (InventoryManager.Instance == null) return -1;
 
         return InventoryManager.Instance.FindSlotIndexByItemId(_requiredItem.itemId);
-    }
-
-    private bool WasRequiredSlotPressedThisFrame(int slotIndex)
-    {
-        if (Keyboard.current == null) return false;
-
-        switch (slotIndex)
-        {
-            case 0:
-                return Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame;
-            case 1:
-                return Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame;
-            case 2:
-                return Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame;
-            default:
-                return false;
-        }
     }
 
     private void TryDeliverBread()
@@ -256,8 +262,11 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
 
         if (_deliveryLines == null || _deliveryLines.Length == 0 || _dialogueUI == null)
         {
-            FinishInteraction();
-            DisableMouseCollidersIfNeeded();
+            if (_playDisappearAfterDialogue)
+                StartDisappearSequence();
+            else
+                FinishVisibleSequence();
+
             return;
         }
 
@@ -298,16 +307,46 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
         _ignoreAdvanceUntilKeyRelease = false;
         _currentLineIndex = 0;
 
-        FinishInteraction();
-        DisableMouseCollidersIfNeeded();
+        if (_playDisappearAfterDialogue)
+        {
+            StartDisappearSequence();
+            return;
+        }
+
+        FinishVisibleSequence();
     }
 
-    private void FinishInteraction()
+    private void StartDisappearSequence()
+    {
+        CloseDialogueUI();
+        HideSlotHint();
+        _isSequenceRunning = true;
+
+        if (_mouseController != null)
+            _mouseController.PlayDisappear(OnDisappearFinished);
+        else
+            OnDisappearFinished();
+    }
+
+    private void OnDisappearFinished()
+    {
+        _mouseDisappeared = true;
+        _isSequenceRunning = false;
+
+        CloseDialogueUI();
+        UnlockPlayer();
+        ReleaseGlobalLock();
+        DisableMouseCollidersIfNeeded();
+        DisableTriggerRootIfNeeded();
+    }
+
+    private void FinishVisibleSequence()
     {
         CloseDialogueUI();
         UnlockPlayer();
         ReleaseGlobalLock();
         _mouseController?.PlayFedIdle();
+        DisableMouseCollidersIfNeeded();
     }
 
     private void DisableMouseCollidersIfNeeded()
@@ -338,6 +377,12 @@ public class MouseBreadDeliveryTrigger : MonoBehaviour
 
             _mouseCollidersDisabled = true;
         }
+    }
+
+    private void DisableTriggerRootIfNeeded()
+    {
+        if (_triggerRootToDisable != null && _triggerRootToDisable.activeSelf)
+            _triggerRootToDisable.SetActive(false);
     }
 
     private void ResolvePlayerMovement()
