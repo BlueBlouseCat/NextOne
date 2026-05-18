@@ -480,18 +480,30 @@ MonoBehaviour:
   _blackoutTargetAlpha: 1
   _clearTextAfterBlackout: 1
   _delayAfterBlackout: 0.3
-  _secondGroupPages:
-  - content: "\u7BA1\u5BB6\uFF1A\u69B4\u5F39\u51FB\u4E2D\u519B\u5E10\u7684\u65F6\u5019\uFF0C\u963F\u745F\u5148\u751F\u6B63\u597D\u5728\u7A97\u524D\u5199\u4E66\u4FE1\u3002\r\n\u533B\u751F\u8BF4\u6211\u4EEC\u5FC5\u987B\u4FDD\u6709\u5E0C\u671B\uFF0C\u4F46\u69B4\u5F39\u5BF9\u4ED6\u7684\u5927\u8111\u5FC5\u5B9A\u4F1A\u9020\u6210\u4F24\u5BB3\u3002\r\n\u5C0F\u59D0\uFF0C\u6211\u975E\u5E38\u9057\u61BE\u3002\u90A3\u4E9B\uFF0C\u5176\u4ED6\u4EBA\u7684\u4FE1\uFF0C\u60A8\u8FD8\u662F\u770B\u4E00\u4E0B\u5427\uFF0C\u8FD9\u4E5F\u662F\u8001\u7237\u592B\u4EBA\u7684\u610F\u601D\u3002\r\n\r\n\u5229\u5179\uFF1A\u2026\u2026\u2026\u2026\u4E0D\u2026\u2026\u4E0D\u2026\u2026\r\n\u90A3\u4E9B\u68A6\uFF0C\u90FD\u662F\u771F\u7684\uFF01\uFF1F\r\n\u963F\u745F\u60F3\u8981\u89E3\u9664\u5A5A\u7EA6\uFF0C\u73B0\u5728\u4ED6\u8FD8\u660F\u8FF7\u4E86\uFF1F\r\n\u6211\u5E94\u8BE5\u600E\u4E48\u529E\u2026\u2026\u2026\u2026\r\nKitty\uFF0C\u5E2E\u5E2E\u6211\uFF01\r\nKitty\uFF1A\u55B5~"
-    charInterval: 0
-    holdDuration: 0
-    waitForInput: 0
   _playOnStart: 1
   _startDelay: 0.5
   _useUnscaledTime: 1
   _clearTextOnStart: 1
-  _allowSkipTyping: 1
+  _secondGroupPages:
+  - content: "\u7BA1\u5BB6\uFF1A\u69B4\u5F39\u51FB\u4E2D\u519B\u5E10\u7684\u65F6\u5019\uFF0C\u963F\u745F\u5148\u751F\u6B63\u597D\u5728\u7A97\u524D\u5199\u4E66\u4FE1\u3002\r\n\u533B\u751F\u8BF4\u6211\u4EEC\u5FC5\u987B\u4FDD\u6709\u5E0C\u671B\uFF0C\u4F46\u69B4\u5F39\u5BF9\u4ED6\u7684\u5927\u8111\u5FC5\u5B9A\u4F1A\u9020\u6210\u4F24\u5BB3\u3002\r\n\u5C0F\u59D0\uFF0C\u6211\u975E\u5E38\u9057\u61BE\u3002\u90A3\u4E9B\uFF0C\u5176\u4ED6\u4EBA\u7684\u4FE1\uFF0C\u60A8\u8FD8\u662F\u770B\u4E00\u4E0B\u5427\uFF0C\u8FD9\u4E5F\u662F\u8001\u7237\u592B\u4EBA\u7684\u610F\u601D\u3002\r\n\r\n\u5229\u5179\uFF1A\u2026\u2026\u2026\u2026\u4E0D\u2026\u2026\u4E0D\u2026\u2026\r\n\u90A3\u4E9B\u68A6\uFF0C\u90FD\u662F\u771F\u7684\uFF01\uFF1F\r\n\u963F\u745F\u60F3\u8981\u89E3\u9664\u5A5A\u7EA6\uFF0C\u73B0\u5728\u4ED6\u8FD8\u660F\u8FF7\u4E86\uFF1F\r\n\u6211\u5E94\u8BE5\u600E\u4E48\u529E\u2026\u2026\u2026\u2026\r\nKitty\uFF0C\u5E2E\u5E2E\u6211\uFF01\r\nKitty\uFF1A\u55B5~\n\n(\u7B2C\u4E00\u7AE0\u8BD5\u73A9\u5DF2\u7ED3\u675F\uFF0C\u611F\u8C22\u4F53\u9A8C)"
+    charInterval: 0.08
+    holdDuration: 1.5
+    waitForInput: 0
   _allowAdvanceByInput: 1
-  _continueHint: Press F / Space
+  _allowSkipTyping: 1
+  _allowSkipHoldDuration: 1
+  _allowSkipBlackout: 1
+  _allowMouseClickSkip: 0
+  _allowSpaceSkip: 0
+  _allowEnterSkip: 0
+  _continueHint: "- \u6309 F \u7EE7\u7EED -"
+  _waitForFinalConfirm: 1
+  _finalSceneName: MainStart
+  _delayBeforeFinalSceneLoad: 0
+  _fadeOutToBlackBeforeLoad: 1
+  _finalFadeOutDuration: 1
+  _holdBlackBeforeLoad: 0.2
+  _allowSkipFinalFade: 0
 --- !u!4 &687850806
 Transform:
   m_ObjectHideFlags: 0
@@ -588,8 +600,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 3.1481934, y: 6.29657}
+  m_SizeDelta: {x: 346.3079, y: 188.8955}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1449695582
 MonoBehaviour:
@@ -731,7 +743,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 1.5
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -828,7 +840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "- \u6309\u952E\u7EE7\u7EED -"
+  m_text: "- \u6309 F \u952E\u7EE7\u7EED -"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}
   m_sharedMaterial: {fileID: 177640095862093432, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}

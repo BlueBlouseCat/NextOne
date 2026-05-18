@@ -333,6 +333,7 @@ MonoBehaviour:
   _requiredItem: {fileID: 11400000, guid: b966b6303ca20cf498c5c2da2cc35bf5, type: 2}
   _requiredDialogueFlag: mouse_blocked_dialogue_done
   _deliveryDoneFlag: mousehole2_bread_delivered
+  _mouseDisappearedFlag: mousehole2_mouse_disappeared
   _deliveryLines:
   - speaker: 1
     content: "\u55DD\uFF01\u55F7\uFF01\u5C0F\u59D0\uFF0C\u8BF7\u60A8\u539F\u8C05\uFF0C\u73B0\u5728\u662F\u6218\u65F6\u7279\u6B8A\u65F6\u671F\u3002"
@@ -340,9 +341,11 @@ MonoBehaviour:
     content: "\u73B0\u5728\uFF0C\u60A8\u53EF\u4EE5\u8FC7\u53BB\u4E86\u3002"
   - speaker: 0
     content: "\u8C22\u8C22\u3002"
+  _playDisappearAfterDialogue: 1
   _disableMouseCollidersAfterDialogue: 1
   _mouseCollidersToDisable:
   - {fileID: 957069438}
+  _triggerRootToDisable: {fileID: 109194730}
 --- !u!1 &536424153
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,7 +924,13 @@ MonoBehaviour:
   _idleAnimation: idel-e
   _fedIdleAnimation: idel-bao
   _eatAnimation: eat
+  _disappearAnimation: disapper
   _fedFlag: mousehole2_bread_delivered
+  _disappearedFlag: mousehole2_mouse_disappeared
+  _hideTarget: {fileID: 957069435}
+  _disableCollidersOnDisappear: 1
+  _collidersToDisable:
+  - {fileID: 957069438}
 --- !u!1 &1099674647
 GameObject:
   m_ObjectHideFlags: 0

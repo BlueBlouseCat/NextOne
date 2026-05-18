@@ -1,0 +1,12 @@
+prop_dianhua.png
+size:2048,512
+filter:Linear,Linear
+pma:true
+sense_guanqia2_dianhuadizuo
+bounds:720,2,401,568
+offsets:710,184,1920,1080
+rotate:90
+sense_guanqia2_dianhuatingtong
+bounds:2,112,291,716
+offsets:928,184,1920,1080
+rotate:90
