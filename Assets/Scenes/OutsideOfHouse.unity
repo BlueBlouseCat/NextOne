@@ -1476,9 +1476,10 @@ MonoBehaviour:
   _catsRoot: {fileID: 2080889244}
   _catsUnlockedFlag: outside_cats_activated
   _doorOpenedFlag: pet_door_opened
+  _door1Root: {fileID: 1572482903}
   _aseRoot: {fileID: 1421667076}
   _consumeKeyOnUse: 1
-  _targetScene: House
+  _targetScene: CG1
   _useFade: 1
   _targetSpawnPointId: 
 --- !u!1 &296927106
@@ -1553,7 +1554,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -6
+  m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: 89125cef51aca4047b1ebd7cfeecfb7c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1575,6 +1576,7 @@ GameObject:
   m_Component:
   - component: {fileID: 296947750}
   - component: {fileID: 296947751}
+  - component: {fileID: 296947752}
   m_Layer: 0
   m_Name: Crow
   m_TagString: Untagged
@@ -1617,6 +1619,51 @@ MonoBehaviour:
   _downToGroundAnimation: down to ground
   _disableRootOnLandComplete: 0
   _landStopDistance: 0.02
+--- !u!61 &296947752
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296947749}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.1409514, y: 1.8106837}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.7180972, y: 3.2335386}
+  m_EdgeRadius: 0
 --- !u!1 &317234266
 GameObject:
   m_ObjectHideFlags: 0
@@ -2308,7 +2355,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 7.1107097, y: 5.2067523}
+  m_Offset: {x: 7.1107097, y: 4.873478}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -2319,7 +2366,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.1638308, y: 14.588937}
+  m_Size: {x: 1.1638308, y: 15.255486}
   m_EdgeRadius: 0
 --- !u!1 &682396792
 GameObject:
@@ -2515,6 +2562,7 @@ GameObject:
   m_Component:
   - component: {fileID: 690729132}
   - component: {fileID: 690729131}
+  - component: {fileID: 690729133}
   m_Layer: 0
   m_Name: CatDialogue
   m_TagString: Untagged
@@ -2548,14 +2596,36 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690729130}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.91, y: 6.43, z: 0.06018298}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1539645159}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2115657332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &690729133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690729130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 592c697dc3ea8ba48a6784903f930c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldAnchorTarget: {fileID: 1259875087}
+  _useParentAsDefaultTarget: 1
+  _worldOffset: {x: 0, y: 2.2, z: 0}
+  _uiCanvas: {fileID: 1539645162}
+  _boxRect: {fileID: 1398580647}
+  _worldCamera: {fileID: 0}
+  _screenOffset: {x: 0, y: 0}
+  _hideWhenTargetBehindCamera: 1
+  _hideWhenOffScreen: 0
+  _visibilityTarget: {fileID: 0}
 --- !u!1 &727896051
 GameObject:
   m_ObjectHideFlags: 0
@@ -4371,7 +4441,7 @@ MonoBehaviour:
   _useFade: 0
   _targetSpawnPointId: out_to_brush
   _transitionMessage: 
-  _targetPosition: {x: 0.7301737, y: -10.62705}
+  _targetPosition: {x: -0.7, y: -10.52}
   _triggerRadius: 1.2
 --- !u!4 &1113561301
 Transform:
@@ -4382,7 +4452,7 @@ Transform:
   m_GameObject: {fileID: 1113561299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.45, y: -10.52, z: 0.11211731}
+  m_LocalPosition: {x: -0.7, y: -10.52, z: 0.11211731}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4610,6 +4680,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1259875086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1259875087}
+  m_Layer: 0
+  m_Name: CatDialogueAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1259875087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259875086}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5, y: -9, z: -0.15589505}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2115657332}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1289986297
 GameObject:
   m_ObjectHideFlags: 0
@@ -5121,7 +5222,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1398580646}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5131,7 +5232,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -114.413956, y: -133.72}
+  m_AnchoredPosition: {x: -114.41388, y: -133.72003}
   m_SizeDelta: {x: 206.2544, y: 137.4315}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1398580648
@@ -5606,7 +5707,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -6
+  m_SortingOrder: -4
   m_Sprite: {fileID: 21300000, guid: 57f06cdc281f0ed439b1f17820c772ea, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -6260,7 +6361,7 @@ MonoBehaviour:
   physicsMovementRelativeTo: {fileID: 0}
   updateTiming: 1
   unscaledTime: 0
-  _animationName: 
+  _animationName: idle-lou
   loop: 1
   timeScale: 1
 --- !u!23 &1895904331
@@ -6331,6 +6432,13 @@ MonoBehaviour:
   _appearAnimation: appear
   _talkAnimation: talk
   _disappearAnimation: disappear
+  _setDefaultAnimationOnAwake: 1
+  _reverseDisappearTrack: 1
+  _defaultMix: 0.06
+  _appearToIdleCatMix: 0.04
+  _idleCatToTalkMix: 0.03
+  _talkToDisappearMix: 0.03
+  _disappearToIdleLouMix: 0.05
 --- !u!1 &1955379674
 GameObject:
   m_ObjectHideFlags: 0
@@ -6764,6 +6872,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1895904329}
+  - {fileID: 690729132}
+  - {fileID: 1259875087}
   m_Father: {fileID: 962325775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2115657333
@@ -6866,7 +6976,6 @@ SceneRoots:
   - {fileID: 1047315630}
   - {fileID: 962325775}
   - {fileID: 1020061506}
-  - {fileID: 690729132}
   - {fileID: 936714681}
   - {fileID: 296947750}
   - {fileID: 1634917525}

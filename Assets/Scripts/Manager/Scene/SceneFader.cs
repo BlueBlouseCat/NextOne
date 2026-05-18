@@ -6,14 +6,14 @@ public class SceneFader : MonoBehaviour
 {
     [Header("Fade")]
     [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private float _fadeDuration = 0.35f;
+    [SerializeField] private float _fadeDuration = 0.8f;
 
     [Header("Message")]
     [SerializeField] private GameObject _messageRoot;
     [SerializeField] private TMP_Text _messageText;
     [SerializeField] private CanvasGroup _messageCanvasGroup;
-    [SerializeField] private float _messageHoldBeforeLoad = 0.6f;
-    [SerializeField] private float _messageHoldAfterLoad = 0.35f;
+    [SerializeField] private float _messageHoldBeforeLoad = 0.8f;
+    [SerializeField] private float _messageHoldAfterLoad = 0.5f;
 
     private string _currentMessage = string.Empty;
 

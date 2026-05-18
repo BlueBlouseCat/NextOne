@@ -10,6 +10,7 @@ public class CrowDialogueTrigger : MonoBehaviour
     [Header("Crow")]
     [SerializeField] private GameObject _crowRoot;
     [SerializeField] private CrowSpineController _crowSpine;
+    //[SerializeField] private BoxCollider2D _crowBox;
 
     [Header("Trigger Point")]
     [SerializeField] private Vector2 _dialoguePoint = new Vector2(-4.98f, 6.43f);
@@ -189,6 +190,7 @@ public class CrowDialogueTrigger : MonoBehaviour
 
         _crowSpine?.PlayIdle();
         HideHint();
+        //_crowBox.enabled = false;
     }
 
     private void TriggerFly()

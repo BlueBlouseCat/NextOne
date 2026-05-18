@@ -452,8 +452,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 57.7, y: -0.3}
-  m_SizeDelta: {x: 46.8393, y: 54.1852}
+  m_AnchoredPosition: {x: 50, y: -1}
+  m_SizeDelta: {x: 40, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &184809858
 MonoBehaviour:
@@ -752,8 +752,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -52.8, y: -0.2}
-  m_SizeDelta: {x: 49.7535, y: 54.985}
+  m_AnchoredPosition: {x: -46, y: -1}
+  m_SizeDelta: {x: 40, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &328195391
 MonoBehaviour:
@@ -924,31 +924,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 461376705}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 542e670226326e042a83cd6208265f43, type: 3}
+  m_Script: {fileID: 11500000, guid: 625398ad436af9a44be11d69c8b85eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enableDebugBoot: 0
-  _loadTargetSceneOnStart: 0
-  _targetSceneName: House
-  _targetSpawnPointId: 
-  _setWindowOpened: 0
-  _setCrowIntroDone: 0
-  _setCrowDeliveryDone: 0
-  _setPlatformBranchUsed: 0
-  _setHouseKeyCollected: 0
-  _setEnteredBrushAfterKey: 0
-  _setOutsideCatsActivated: 0
-  _setMotherCatDialogueDone: 0
-  _setMouseHole1PaintingPuzzleSolved: 0
-  _setMouseHole2MouseDialogueDone: 0
-  _setHankyCollected: 0
-  _setCodeBookCollected: 0
-  _inventoryManager: {fileID: 0}
-  _hankyItem: {fileID: 0}
-  _codeBookItem: {fileID: 0}
-  _itemsToGive: []
+  _hideInScenes:
+  - CG1
+  _inventoryRootOverride: {fileID: 0}
+  _settingsRootOverride: {fileID: 0}
+  _autoHideInventoryUI: 1
+  _autoHideSettingsCanvas: 1
+  _dontDestroyOnLoadSelf: 0
+  _applyAgainNextFrame: 1
 --- !u!1 &468475949
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,8 +1616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 354.52, y: -17.1401}
-  m_SizeDelta: {x: 226.99, y: 89.7499}
+  m_AnchoredPosition: {x: 359.70416, y: -30.251608}
+  m_SizeDelta: {x: 200.767, y: 79.3816}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &811450380
 MonoBehaviour:
@@ -2556,8 +2544,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.4, y: -0.8}
-  m_SizeDelta: {x: 50.6345, y: 55.2811}
+  m_AnchoredPosition: {x: 3, y: -1}
+  m_SizeDelta: {x: 40, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1266894651
 MonoBehaviour:

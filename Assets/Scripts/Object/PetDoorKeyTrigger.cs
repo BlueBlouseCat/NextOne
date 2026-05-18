@@ -17,11 +17,12 @@ public class PetDoorKeyTrigger : MonoBehaviour
     [SerializeField] private string _doorOpenedFlag = "pet_door_opened";
 
     [Header("After Use")]
+    [SerializeField] private GameObject _door1Root;
     [SerializeField] private GameObject _aseRoot;
-    [SerializeField] private bool _consumeKeyOnUse = false;
+    [SerializeField] private bool _consumeKeyOnUse = true;
 
     [Header("Scene Load")]
-    [SerializeField] private string _targetScene = "House";
+    [SerializeField] private string _targetScene = "CG1";
     [SerializeField] private bool _useFade = true;
     [SerializeField] private string _targetSpawnPointId = "";
 
@@ -31,9 +32,9 @@ public class PetDoorKeyTrigger : MonoBehaviour
 
     private void OnEnable()
     {
-        _hasCompleted = GameManager.Instance != null && GameManager.Instance.GetFlag(_doorOpenedFlag);
+        _hasCompleted = IsDoorAlreadyOpened();
         HideSlotHint();
-        RefreshASeState();
+        RefreshVisualState();
     }
 
     private void OnDisable()
@@ -52,10 +53,10 @@ public class PetDoorKeyTrigger : MonoBehaviour
         if (GameManager.Instance == null) return;
         if (GameManager.Instance.IsLoadingScene()) return;
 
-        if (!_hasCompleted)
-            _hasCompleted = GameManager.Instance.GetFlag(_doorOpenedFlag);
+        if (!_hasCompleted && IsDoorAlreadyOpened())
+            _hasCompleted = true;
 
-        RefreshASeState();
+        RefreshVisualState();
 
         if (_hasCompleted)
         {
@@ -116,7 +117,7 @@ public class PetDoorKeyTrigger : MonoBehaviour
         if (!CanHandleItem(item)) return false;
         if (SceneManager.GetActiveScene().name != _currentScene) return false;
         if (GameManager.Instance == null || GameManager.Instance.IsLoadingScene()) return false;
-        if (_hasCompleted || GameManager.Instance.GetFlag(_doorOpenedFlag)) return false;
+        if (_hasCompleted || IsDoorAlreadyOpened()) return false;
         if (!_playerInRange) return false;
         if (!AreCatsReady()) return false;
 
@@ -139,7 +140,7 @@ public class PetDoorKeyTrigger : MonoBehaviour
             GameManager.Instance.SetFlag(_doorOpenedFlag, true);
 
         HideSlotHint();
-        RefreshASeState();
+        RefreshVisualState();
         LoadTargetScene();
     }
 
@@ -152,33 +153,49 @@ public class PetDoorKeyTrigger : MonoBehaviour
         return _catsRoot.activeInHierarchy;
     }
 
-    private void RefreshASeState()
+    private bool IsDoorAlreadyOpened()
     {
-        if (_aseRoot == null) return;
+        return GameManager.Instance != null
+            && !string.IsNullOrWhiteSpace(_doorOpenedFlag)
+            && GameManager.Instance.GetFlag(_doorOpenedFlag);
+    }
 
-        bool shouldShow = GameManager.Instance != null && GameManager.Instance.GetFlag(_doorOpenedFlag);
-        _aseRoot.SetActive(shouldShow);
+    private void RefreshVisualState()
+    {
+        bool shouldShowOpenedState = IsDoorAlreadyOpened();
+
+        if (_door1Root != null)
+            _door1Root.SetActive(shouldShowOpenedState);
+
+        if (_aseRoot != null)
+            _aseRoot.SetActive(shouldShowOpenedState);
     }
 
     private void LoadTargetScene()
     {
-        if (GameManager.Instance == null) return;
         if (string.IsNullOrWhiteSpace(_targetScene)) return;
 
-        if (_useFade)
+        if (GameManager.Instance != null)
         {
-            if (string.IsNullOrWhiteSpace(_targetSpawnPointId))
-                GameManager.Instance.LoadSceneWithFade(_targetScene);
+            if (_useFade)
+            {
+                if (string.IsNullOrWhiteSpace(_targetSpawnPointId))
+                    GameManager.Instance.LoadSceneWithFade(_targetScene);
+                else
+                    GameManager.Instance.LoadSceneWithFade(_targetScene, _targetSpawnPointId);
+            }
             else
-                GameManager.Instance.LoadSceneWithFade(_targetScene, _targetSpawnPointId);
+            {
+                if (string.IsNullOrWhiteSpace(_targetSpawnPointId))
+                    GameManager.Instance.LoadScene(_targetScene);
+                else
+                    GameManager.Instance.LoadScene(_targetScene, _targetSpawnPointId);
+            }
+
+            return;
         }
-        else
-        {
-            if (string.IsNullOrWhiteSpace(_targetSpawnPointId))
-                GameManager.Instance.LoadScene(_targetScene);
-            else
-                GameManager.Instance.LoadScene(_targetScene, _targetSpawnPointId);
-        }
+
+        SceneManager.LoadScene(_targetScene);
     }
 
     private int GetCurrentRequiredItemSlot()
