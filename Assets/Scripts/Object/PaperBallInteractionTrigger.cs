@@ -24,6 +24,7 @@ public class PaperBallInteractionTrigger : MonoBehaviour
 
     private bool _playerInRange;
     private bool _hintShownByThisScript;
+    private bool _holdsInteractionLock;
     private InteractionStep _step;
 
     private void Start()
@@ -40,6 +41,7 @@ public class PaperBallInteractionTrigger : MonoBehaviour
     {
         _playerInRange = false;
         HideHint();
+        ReleaseInteractionLock();
     }
 
     private void Update()
@@ -72,17 +74,98 @@ public class PaperBallInteractionTrigger : MonoBehaviour
         }
 
         bool popupOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsPopupOpen;
+        bool interactionAvailable = !GlobalInteractionLock.IsLocked || _holdsInteractionLock;
 
-        if (_playerInRange && !popupOpen)
-            ShowHint();
+        if (_playerInRange && interactionAvailable && !popupOpen)
+            ShowHint(_step == InteractionStep.PaperShown ? ProjectInteractionHints.Close : ProjectInteractionHints.Interact);
         else
             HideHint();
 
         if (!_playerInRange) return;
+        if (!interactionAvailable) return;
         if (popupOpen) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        AdvanceInteraction();
+        if (_step == InteractionStep.None)
+        {
+            if (GameplayInputUtil.InteractPressedThisFrame())
+                ShowPaperAndHideBall();
+
+            return;
+        }
+
+        if (_step == InteractionStep.PaperShown &&
+            GameplayInputUtil.CancelPressedThisFrame() &&
+            GameplayInputUtil.ConsumeCancelThisFrame())
+            FinishInteraction();
+    }
+
+    private void ShowPaperAndHideBall()
+    {
+        if (_paperBallRoot != null)
+            _paperBallRoot.SetActive(false);
+
+        if (_paperRoot != null)
+            _paperRoot.SetActive(true);
+
+        _step = InteractionStep.PaperShown;
+        AcquireInteractionLock();
+    }
+
+    private void FinishInteraction()
+    {
+        if (_paperRoot != null)
+            _paperRoot.SetActive(false);
+
+        _step = InteractionStep.Completed;
+        _playerInRange = false;
+        HideHint();
+        ReleaseInteractionLock();
+
+        if (_completeOnlyOnce &&
+            GameManager.Instance != null &&
+            !string.IsNullOrWhiteSpace(_completeFlag))
+        {
+            GameManager.Instance.SetFlag(_completeFlag, true);
+        }
+    }
+
+    private void RefreshState()
+    {
+        _playerInRange = false;
+        HideHint();
+        ReleaseInteractionLock();
+
+        bool alreadyCompleted = _completeOnlyOnce &&
+                                GameManager.Instance != null &&
+                                GameManager.Instance.GetFlag(_completeFlag);
+
+        if (alreadyCompleted)
+        {
+            ApplyCompletedState();
+            return;
+        }
+
+        _step = InteractionStep.None;
+
+        if (_paperBallRoot != null)
+            _paperBallRoot.SetActive(true);
+
+        if (_paperRoot != null)
+            _paperRoot.SetActive(false);
+    }
+
+    private void ApplyCompletedState()
+    {
+        _step = InteractionStep.Completed;
+        _playerInRange = false;
+        HideHint();
+        ReleaseInteractionLock();
+
+        if (_paperBallRoot != null)
+            _paperBallRoot.SetActive(false);
+
+        if (_paperRoot != null)
+            _paperRoot.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -127,92 +210,29 @@ public class PaperBallInteractionTrigger : MonoBehaviour
             HideHint();
     }
 
-    private void AdvanceInteraction()
+    private void ShowHint(string hintText)
     {
-        switch (_step)
-        {
-            case InteractionStep.None:
-                ShowPaperAndHideBall();
-                break;
-
-            case InteractionStep.PaperShown:
-                FinishInteraction();
-                break;
-        }
-    }
-
-    private void ShowPaperAndHideBall()
-    {
-        if (_paperBallRoot != null)
-            _paperBallRoot.SetActive(false);
-
-        if (_paperRoot != null)
-            _paperRoot.SetActive(true);
-
-        _step = InteractionStep.PaperShown;
-    }
-
-    private void FinishInteraction()
-    {
-        if (_paperRoot != null)
-            _paperRoot.SetActive(false);
-
-        _step = InteractionStep.Completed;
-        _playerInRange = false;
-        HideHint();
-
-        if (_completeOnlyOnce &&
-            GameManager.Instance != null &&
-            !string.IsNullOrWhiteSpace(_completeFlag))
-        {
-            GameManager.Instance.SetFlag(_completeFlag, true);
-        }
-    }
-
-    private void RefreshState()
-    {
-        _playerInRange = false;
-        HideHint();
-
-        bool alreadyCompleted = _completeOnlyOnce &&
-                                GameManager.Instance != null &&
-                                GameManager.Instance.GetFlag(_completeFlag);
-
-        if (alreadyCompleted)
-        {
-            ApplyCompletedState();
-            return;
-        }
-
-        _step = InteractionStep.None;
-
-        if (_paperBallRoot != null)
-            _paperBallRoot.SetActive(true);
-
-        if (_paperRoot != null)
-            _paperRoot.SetActive(false);
-    }
-
-    private void ApplyCompletedState()
-    {
-        _step = InteractionStep.Completed;
-        _playerInRange = false;
-        HideHint();
-
-        if (_paperBallRoot != null)
-            _paperBallRoot.SetActive(false);
-
-        if (_paperRoot != null)
-            _paperRoot.SetActive(false);
-    }
-
-    private void ShowHint()
-    {
-        if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
+    }
+
+    private void AcquireInteractionLock()
+    {
+        if (_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Acquire();
+        _holdsInteractionLock = true;
+        InventoryUI.Instance?.ShowInteractHint(false);
+    }
+
+    private void ReleaseInteractionLock()
+    {
+        if (!_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Release();
+        _holdsInteractionLock = false;
     }
 
     private void HideHint()

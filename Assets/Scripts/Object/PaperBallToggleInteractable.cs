@@ -91,16 +91,20 @@ public class PaperBallToggleInteractable : MonoBehaviour
         ApplyFocus(hasFocus);
 
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        if (InventoryUI.Instance != null &&
-            InventoryUI.Instance.IsPopupOpen &&
-            !_paperShown)
+        if (!_paperShown)
         {
+            if (!GameplayInputUtil.InteractPressedThisFrame()) return;
+
+            if (InventoryUI.Instance != null && InventoryUI.Instance.IsPopupOpen)
+                return;
+
+            SetPaperShown(true);
             return;
         }
 
-        TogglePaper();
+        if (GameplayInputUtil.CancelPressedThisFrame() && GameplayInputUtil.ConsumeCancelThisFrame())
+            SetPaperShown(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other) => SetPlayerInRange(other, true);
@@ -142,14 +146,14 @@ public class PaperBallToggleInteractable : MonoBehaviour
         _isFocusedByThisScript = focused;
 
         if (focused)
-            ShowHint();
+            ShowHint(_paperShown ? ProjectInteractionHints.Close : ProjectInteractionHints.Interact);
         else
             HideHint();
     }
 
-    private void TogglePaper()
+    private void SetPaperShown(bool shown)
     {
-        _paperShown = !_paperShown;
+        _paperShown = shown;
 
         if (_paperShown)
             AcquireInteractionLock();
@@ -188,12 +192,11 @@ public class PaperBallToggleInteractable : MonoBehaviour
         _holdsInteractionLock = false;
     }
 
-    private void ShowHint()
+    private void ShowHint(string hintText)
     {
-        if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
     }
 

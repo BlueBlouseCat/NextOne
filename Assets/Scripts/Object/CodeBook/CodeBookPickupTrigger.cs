@@ -21,7 +21,7 @@ public class CodeBookPickupTrigger : MonoBehaviour
     private void Awake()
     {
         if (_previewViewer == null)
-            _previewViewer = FindObjectOfType<ItemPreviewViewerUI>();
+            _previewViewer = ItemPreviewViewerUI.EnsureInstance();
     }
 
     private void Start()
@@ -142,8 +142,11 @@ public class CodeBookPickupTrigger : MonoBehaviour
         HideHint();
         SetOutline(false);
 
-        if (_previewViewer != null)
-            _previewViewer.TryOpen(_codeBookItem);
+        ItemPreviewViewerUI previewViewer = _previewViewer != null
+            ? _previewViewer
+            : ItemPreviewViewerUI.EnsureInstance();
+
+        previewViewer?.TryOpen(_codeBookItem);
 
         gameObject.SetActive(false);
     }
@@ -170,7 +173,7 @@ public class CodeBookPickupTrigger : MonoBehaviour
         if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, ProjectInteractionHints.Interact);
         _hintShownByThisScript = true;
     }
 

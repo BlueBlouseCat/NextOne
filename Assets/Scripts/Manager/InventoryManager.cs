@@ -93,9 +93,18 @@ public class InventoryManager : MonoBehaviour
         if (item == null) return;
 
         ItemEffectController effectController = FindObjectOfType<ItemEffectController>();
-        if (effectController == null) return;
+        GameObject runtimeEffectControllerObject = null;
+
+        if (effectController == null)
+        {
+            runtimeEffectControllerObject = new GameObject("[RuntimeItemEffectController]");
+            effectController = runtimeEffectControllerObject.AddComponent<ItemEffectController>();
+        }
 
         bool used = effectController.TryUse(item);
+        if (runtimeEffectControllerObject != null)
+            Destroy(runtimeEffectControllerObject);
+
         if (!used) return;
 
         if (item.consumeOnUse)

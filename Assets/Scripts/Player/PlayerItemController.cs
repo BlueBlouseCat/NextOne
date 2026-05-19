@@ -186,6 +186,13 @@ public class PlayerItemController : MonoBehaviour
         RefreshInteractHint();
     }
 
+    public void ClearFocusedTargets()
+    {
+        _focusedItem = null;
+        _focusedInspectable = null;
+        RefreshInteractHint();
+    }
+
     public void OnInteract(InputAction.CallbackContext context)
     {
         ResolveReferences();
@@ -252,10 +259,13 @@ public class PlayerItemController : MonoBehaviour
         if (_lastCancelHandledFrame == Time.frameCount)
             return;
 
-        _lastCancelHandledFrame = Time.frameCount;
+        if (GameplayInputUtil.IsCancelConsumedThisFrame())
+            return;
 
         if (_itemPreviewViewer != null && _itemPreviewViewer.IsOpen)
         {
+            GameplayInputUtil.ConsumeCancelThisFrame();
+            _lastCancelHandledFrame = Time.frameCount;
             _itemPreviewViewer.Close();
             RefreshInteractHint();
             return;
@@ -263,12 +273,20 @@ public class PlayerItemController : MonoBehaviour
 
         if (_inventoryUI != null && _inventoryUI.IsPopupOpen)
         {
-            CancelPopup();
+            if (_inventoryUI.CanClosePopupWithCancel)
+            {
+                GameplayInputUtil.ConsumeCancelThisFrame();
+                _lastCancelHandledFrame = Time.frameCount;
+                CancelPopup();
+            }
+
             return;
         }
 
         if (_coatInfoPopupUI != null && _coatInfoPopupUI.IsOpen)
         {
+            GameplayInputUtil.ConsumeCancelThisFrame();
+            _lastCancelHandledFrame = Time.frameCount;
             _coatInfoPopupUI.Close();
             RefreshInteractHint();
             return;
@@ -279,6 +297,8 @@ public class PlayerItemController : MonoBehaviour
 
         if (IsSettingsOpen())
         {
+            GameplayInputUtil.ConsumeCancelThisFrame();
+            _lastCancelHandledFrame = Time.frameCount;
             CloseSettingsPanel();
             RefreshInteractHint();
             return;
@@ -287,6 +307,8 @@ public class PlayerItemController : MonoBehaviour
         if (GlobalInteractionLock.IsLocked)
             return;
 
+        GameplayInputUtil.ConsumeCancelThisFrame();
+        _lastCancelHandledFrame = Time.frameCount;
         OpenSettingsPanel();
         RefreshInteractHint();
     }

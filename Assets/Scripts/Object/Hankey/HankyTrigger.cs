@@ -399,7 +399,7 @@ public class HankyTrigger : MonoBehaviour
         if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, ProjectInteractionHints.Interact);
         _hintShownByThisScript = true;
     }
 

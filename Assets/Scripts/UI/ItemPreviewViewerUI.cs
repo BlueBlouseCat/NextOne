@@ -22,6 +22,19 @@ public class ItemPreviewViewerUI : MonoBehaviour
 
     public bool IsOpen => _root != null && _root.activeSelf;
 
+    public static ItemPreviewViewerUI EnsureInstance()
+    {
+        if (Instance != null)
+            return Instance;
+
+        ItemPreviewViewerUI existing = FindObjectOfType<ItemPreviewViewerUI>();
+        if (existing != null)
+            return existing;
+
+        GameObject runtimeViewer = new GameObject("[RuntimeItemPreviewViewerUI]");
+        return runtimeViewer.AddComponent<ItemPreviewViewerUI>();
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

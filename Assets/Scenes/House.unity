@@ -4869,6 +4869,7 @@ MonoBehaviour:
   _spawnUnlockedFlag: house.telegraph.unlocked_from_hole6
   _unlockPermanentlyAfterFirstMatch: 1
   _inspectData: {fileID: 1766589755}
+  _dialogueUI: {fileID: 0}
   _rememberFirstInspectWithFlag: 1
   _firstInspectFlag: house.telegraph.first_inspected
   _telegraph2: {fileID: 1562345151}
@@ -7793,7 +7794,7 @@ Transform:
   m_GameObject: {fileID: 1322759002}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.226, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8730,9 +8731,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0090224445, y: 0.022556096}
+  m_Offset: {x: 0.11193153, y: 0.022556096}
   serializedVersion: 2
-  m_Radius: 0.13910246
+  m_Radius: 0.24201155
 --- !u!114 &1517168309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9107,7 +9108,7 @@ Transform:
   m_GameObject: {fileID: 1551697624}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.93, y: -3.91, z: -0.07292927}
+  m_LocalPosition: {x: 6.85, y: -3.91, z: -0.07292927}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9906,9 +9907,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0090224445, y: 0.022556096}
+  m_Offset: {x: -0.099904, y: 0.022556096}
   serializedVersion: 2
-  m_Radius: 0.13910246
+  m_Radius: 0.26845264
 --- !u!114 &1726056954
 MonoBehaviour:
   m_ObjectHideFlags: 0

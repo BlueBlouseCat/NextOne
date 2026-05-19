@@ -14,7 +14,9 @@ public class DiaryInteractionTrigger : MonoBehaviour
 
     private bool _playerInRange;
     private bool _hintShownByThisScript;
+    private bool _holdsInteractionLock;
     private Transform _playerTransform;
+    private PlayerItemController _playerItemController;
 
     private void Awake()
     {
@@ -40,6 +42,7 @@ public class DiaryInteractionTrigger : MonoBehaviour
     {
         _playerInRange = false;
         HideHint();
+        ReleaseInteractionLock();
         InteractionFocusService.RemoveCandidate(this);
     }
 
@@ -47,21 +50,47 @@ public class DiaryInteractionTrigger : MonoBehaviour
     {
         InteractionFocusService.SetCandidate(this, _focusPoint, _playerInRange, _interactionPriority);
 
+        bool blockingPopupOpen = HasBlockingPopupOpen();
+        bool interactionAvailable = !GlobalInteractionLock.IsLocked || _holdsInteractionLock;
+
         bool hasFocus =
             _playerInRange &&
             _playerTransform != null &&
-            !GlobalInteractionLock.IsLocked &&
+            !blockingPopupOpen &&
+            interactionAvailable &&
             InteractionFocusService.HasFocus(this, _playerTransform.position);
 
         if (hasFocus)
-            ShowHint();
+            ShowHint(IsDiary2Active() ? ProjectInteractionHints.Close : ProjectInteractionHints.Interact);
         else
             HideHint();
 
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        ToggleDiary2();
+        if (!IsDiary2Active())
+        {
+            if (GameplayInputUtil.InteractPressedThisFrame())
+                SetDiary2Active(true);
+
+            return;
+        }
+
+        if (GameplayInputUtil.CancelPressedThisFrame() && GameplayInputUtil.ConsumeCancelThisFrame())
+            SetDiary2Active(false);
+    }
+
+    private bool HasBlockingPopupOpen()
+    {
+        if (IsDiary2Active())
+            return false;
+
+        if (InventoryUI.Instance != null && InventoryUI.Instance.IsPopupOpen)
+            return true;
+
+        if (ItemPreviewViewerUI.Instance != null && ItemPreviewViewerUI.Instance.IsOpen)
+            return true;
+
+        return false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -88,6 +117,13 @@ public class DiaryInteractionTrigger : MonoBehaviour
         if (inRange)
         {
             _playerTransform = other.transform;
+
+            if (_playerItemController == null)
+            {
+                _playerItemController = other.GetComponent<PlayerItemController>();
+                if (_playerItemController == null)
+                    _playerItemController = other.GetComponentInParent<PlayerItemController>();
+            }
         }
         else
         {
@@ -96,11 +132,6 @@ public class DiaryInteractionTrigger : MonoBehaviour
             if (_autoCloseDiary2OnExit)
                 SetDiary2Active(false);
         }
-    }
-
-    private void ToggleDiary2()
-    {
-        SetDiary2Active(!IsDiary2Active());
     }
 
     private bool IsDiary2Active()
@@ -112,14 +143,36 @@ public class DiaryInteractionTrigger : MonoBehaviour
     {
         if (_diary2 != null)
             _diary2.SetActive(active);
+
+        if (active)
+            AcquireInteractionLock();
+        else
+            ReleaseInteractionLock();
     }
 
-    private void ShowHint()
+    private void AcquireInteractionLock()
     {
-        if (_hintShownByThisScript) return;
+        if (_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Acquire();
+        _holdsInteractionLock = true;
+        _playerItemController?.ClearFocusedTargets();
+        InventoryUI.Instance?.ShowInteractHint(false);
+    }
+
+    private void ReleaseInteractionLock()
+    {
+        if (!_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Release();
+        _holdsInteractionLock = false;
+    }
+
+    private void ShowHint(string hintText)
+    {
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
     }
 

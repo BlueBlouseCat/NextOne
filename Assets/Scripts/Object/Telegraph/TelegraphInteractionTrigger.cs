@@ -82,6 +82,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     private bool _hintShownByThisScript;
     private bool _holdsInteractionLock;
     private bool _hasSeenFirstInspect;
+    private bool _waitingFirstInspectContinue;
     private bool _waitingRingCompleteResult;
     private bool _hasAppliedDecodeReveal;
     private bool _isUnlockedBySpawn;
@@ -134,6 +135,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         UnsubscribePendingRingers();
 
         HideHint();
+        CloseFirstInspectPopup();
         ForceCloseTelegraph2();
         InteractionFocusService.RemoveCandidate(this);
 
@@ -143,6 +145,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         _playerItemController = null;
         _playerInput = null;
         _submitAction = null;
+        _waitingFirstInspectContinue = false;
         _waitingRingCompleteResult = false;
         _pendingResultPassword = string.Empty;
         _remainingRingCallbacks = 0;
@@ -192,8 +195,18 @@ public class TelegraphInteractionTrigger : MonoBehaviour
             interactionAvailable &&
             InteractionFocusService.HasFocus(this, _playerTransform.position);
 
+        if (_waitingFirstInspectContinue)
+        {
+            HideHint();
+            HandleFirstInspectContinueInput();
+            return;
+        }
+
         RefreshHint(hasFocus, popupOpen, resultCanvasOpen);
-        HandleFInput(hasFocus, popupOpen, resultCanvasOpen);
+        HandleOpenInput(hasFocus, popupOpen, resultCanvasOpen);
+
+        if (HandleTelegraphCloseInput(hasFocus, popupOpen, resultCanvasOpen))
+            return;
 
         if (IsTelegraph2Active() && !_waitingRingCompleteResult)
             HandleCodeInput();
@@ -221,32 +234,42 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         if (!IsResultCanvasActive())
             return false;
 
-        if (!GameplayInputUtil.InteractPressedThisFrame())
+        if (!GameplayInputUtil.CancelPressedThisFrame())
+            return false;
+        if (!GameplayInputUtil.ConsumeCancelThisFrame())
             return false;
 
         SetResultCanvasActive(false);
         return true;
     }
 
-    private void HandleFInput(bool hasFocus, bool popupOpen, bool resultCanvasOpen)
+    private void HandleOpenInput(bool hasFocus, bool popupOpen, bool resultCanvasOpen)
     {
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
         if (popupOpen) return;
         if (resultCanvasOpen) return;
         if (_waitingRingCompleteResult) return;
+        if (IsTelegraph2Active()) return;
+        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        if (!IsTelegraph2Active())
-        {
-            if (!_hasSeenFirstInspect)
-                OpenFirstInspect();
-            else
-                OpenTelegraph2();
-        }
+        if (!_hasSeenFirstInspect)
+            OpenFirstInspect();
         else
-        {
-            CloseTelegraph2();
-        }
+            OpenTelegraph2();
+    }
+
+    private bool HandleTelegraphCloseInput(bool hasFocus, bool popupOpen, bool resultCanvasOpen)
+    {
+        if (!hasFocus) return false;
+        if (!IsTelegraph2Active()) return false;
+        if (popupOpen) return false;
+        if (resultCanvasOpen) return false;
+        if (_waitingRingCompleteResult) return false;
+        if (!GameplayInputUtil.CancelPressedThisFrame()) return false;
+        if (!GameplayInputUtil.ConsumeCancelThisFrame()) return false;
+
+        CloseTelegraph2();
+        return true;
     }
 
     private void HandleCodeInput()
@@ -279,8 +302,7 @@ public class TelegraphInteractionTrigger : MonoBehaviour
             changed = true;
         }
 
-        if ((Keyboard.current.deleteKey.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame) &&
-            _currentCode.Length > 0)
+        if (Keyboard.current.deleteKey.wasPressedThisFrame && _currentCode.Length > 0)
         {
             _currentCode = string.Empty;
             changed = true;
@@ -455,22 +477,41 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         _hasSeenFirstInspect = true;
         SaveFirstInspectState();
 
-        if (_inspectData == null || InventoryUI.Instance == null || _playerItemController == null)
+        if (_inspectData == null)
         {
             OpenTelegraph2();
             return;
         }
 
-        if (_playerMovement != null)
-            _playerMovement.SetExternalInputLocked(true);
+        if (InventoryUI.Instance == null)
+        {
+            OpenTelegraph2();
+            return;
+        }
 
+        AcquireInteractionLock();
+        LockPlayerMovement();
         InventoryUI.Instance.OpenInspectPopup(
             _inspectData.Title,
             _inspectData.Description,
-            _playerItemController
+            null,
+            null,
+            ProjectInteractionHints.Continue,
+            false
         );
+        _waitingFirstInspectContinue = true;
 
         HideHint();
+    }
+
+    private void HandleFirstInspectContinueInput()
+    {
+        if (!GameplayInputUtil.InteractPressedThisFrame())
+            return;
+
+        CloseFirstInspectPopup();
+        _waitingFirstInspectContinue = false;
+        OpenTelegraph2();
     }
 
     private void OpenTelegraph2()
@@ -579,6 +620,14 @@ public class TelegraphInteractionTrigger : MonoBehaviour
         {
             HideHint();
 
+            if (_waitingFirstInspectContinue)
+            {
+                CloseFirstInspectPopup();
+                _waitingFirstInspectContinue = false;
+                ReleaseInteractionLock();
+                UnlockPlayerMovement();
+            }
+
             if (_autoCloseTelegraph2OnExit && IsTelegraph2Active())
                 CloseTelegraph2();
         }
@@ -588,6 +637,12 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     {
         if (_txtCode == null) return;
         _txtCode.text = string.IsNullOrEmpty(_currentCode) ? _idleDisplayText : _currentCode;
+    }
+
+    private void CloseFirstInspectPopup()
+    {
+        if (InventoryUI.Instance != null && InventoryUI.Instance.IsPopupOpen)
+            InventoryUI.Instance.ClosePickupPopup();
     }
 
     private void SetTelegraph2Active(bool active)
@@ -605,6 +660,20 @@ public class TelegraphInteractionTrigger : MonoBehaviour
     {
         if (_telegraphResultCanvasRoot != null)
             _telegraphResultCanvasRoot.SetActive(active);
+
+        if (active)
+        {
+            AcquireInteractionLock();
+            LockPlayerMovement();
+            HideHint();
+            return;
+        }
+
+        if (!IsTelegraph2Active() && !_waitingFirstInspectContinue)
+        {
+            ReleaseInteractionLock();
+            UnlockPlayerMovement();
+        }
     }
 
     private bool IsResultCanvasActive()

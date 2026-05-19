@@ -31,6 +31,7 @@ public class LetterSwapInspectTrigger : MonoBehaviour
 
     private bool _playerInRange;
     private bool _hintShownByThisScript;
+    private bool _holdsInteractionLock;
     private bool _isViewingLetter2;
     private bool _interactionEnabled;
     private bool _hasViewedLetter2Once;
@@ -90,6 +91,7 @@ public class LetterSwapInspectTrigger : MonoBehaviour
         if (_dialogueUI != null)
             _dialogueUI.Close();
 
+        ReleaseInteractionLock();
         UnlockPlayer();
     }
 
@@ -119,22 +121,32 @@ public class LetterSwapInspectTrigger : MonoBehaviour
         bool canCandidateFocus = _interactionEnabled && _playerInRange;
         InteractionFocusService.SetCandidate(this, _focusPoint, canCandidateFocus, _interactionPriority);
 
+        bool interactionAvailable = !GlobalInteractionLock.IsLocked || _holdsInteractionLock;
+
         bool hasFocus =
             _interactionEnabled &&
             _playerInRange &&
             _playerTransform != null &&
-            !GlobalInteractionLock.IsLocked &&
+            interactionAvailable &&
             InteractionFocusService.HasFocus(this, _playerTransform.position);
 
         if (hasFocus)
-            ShowHint();
+            ShowHint(_isViewingLetter2 ? ProjectInteractionHints.Close : ProjectInteractionHints.Interact);
         else
             HideHint();
 
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        ToggleLetterView();
+        if (!_isViewingLetter2)
+        {
+            if (GameplayInputUtil.InteractPressedThisFrame())
+                SetViewingState(true);
+
+            return;
+        }
+
+        if (GameplayInputUtil.CancelPressedThisFrame() && GameplayInputUtil.ConsumeCancelThisFrame())
+            SetViewingState(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other) => UpdatePlayerRange(other, true);
@@ -177,11 +189,6 @@ public class LetterSwapInspectTrigger : MonoBehaviour
         }
     }
 
-    private void ToggleLetterView()
-    {
-        SetViewingState(!_isViewingLetter2);
-    }
-
     private void SetViewingState(bool viewingLetter2)
     {
         bool wasViewingLetter2 = _isViewingLetter2;
@@ -196,9 +203,31 @@ public class LetterSwapInspectTrigger : MonoBehaviour
         if (_letter2Root != null)
             _letter2Root.SetActive(viewingLetter2);
 
+        if (viewingLetter2)
+            AcquireInteractionLock();
+        else
+            ReleaseInteractionLock();
+
         bool justClosedLetter2 = wasViewingLetter2 && !viewingLetter2;
         if (justClosedLetter2)
             TryStartEndingSequence();
+    }
+
+    private void AcquireInteractionLock()
+    {
+        if (_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Acquire();
+        _holdsInteractionLock = true;
+        InventoryUI.Instance?.ShowInteractHint(false);
+    }
+
+    private void ReleaseInteractionLock()
+    {
+        if (!_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Release();
+        _holdsInteractionLock = false;
     }
 
     private void TryStartEndingSequence()
@@ -281,12 +310,11 @@ public class LetterSwapInspectTrigger : MonoBehaviour
                SceneManager.GetActiveScene().name == _currentScene;
     }
 
-    private void ShowHint()
+    private void ShowHint(string hintText)
     {
-        if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
     }
 

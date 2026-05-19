@@ -20,6 +20,7 @@ public class ToggleInteractionTrigger : MonoBehaviour
 
     private bool _playerInRange;
     private bool _hintShownByThisScript;
+    private bool _holdsInteractionLock;
     private Transform _playerTransform;
 
     private void Awake()
@@ -43,6 +44,7 @@ public class ToggleInteractionTrigger : MonoBehaviour
     private void OnDisable()
     {
         HideHint();
+        ReleaseInteractionLock();
         InteractionFocusService.RemoveCandidate(this);
 
         _playerInRange = false;
@@ -67,21 +69,31 @@ public class ToggleInteractionTrigger : MonoBehaviour
 
         InteractionFocusService.SetCandidate(this, _focusPoint, _playerInRange, _interactionPriority);
 
+        bool interactionAvailable = !GlobalInteractionLock.IsLocked || _holdsInteractionLock;
+
         bool hasFocus =
             _playerInRange &&
             _playerTransform != null &&
-            !GlobalInteractionLock.IsLocked &&
+            interactionAvailable &&
             InteractionFocusService.HasFocus(this, _playerTransform.position);
 
         if (hasFocus)
-            ShowHint();
+            ShowHint(IsTargetActive() ? ProjectInteractionHints.Close : ProjectInteractionHints.Interact);
         else
             HideHint();
 
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
 
-        ToggleTarget();
+        if (!IsTargetActive())
+        {
+            if (GameplayInputUtil.InteractPressedThisFrame())
+                SetTargetActive(true);
+
+            return;
+        }
+
+        if (GameplayInputUtil.CancelPressedThisFrame() && GameplayInputUtil.ConsumeCancelThisFrame())
+            SetTargetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other) => UpdatePlayerRange(other, true);
@@ -114,11 +126,6 @@ public class ToggleInteractionTrigger : MonoBehaviour
             SetTargetActive(false);
     }
 
-    private void ToggleTarget()
-    {
-        SetTargetActive(!IsTargetActive());
-    }
-
     private bool IsTargetActive()
     {
         return _targetRoot != null && _targetRoot.activeSelf;
@@ -128,6 +135,28 @@ public class ToggleInteractionTrigger : MonoBehaviour
     {
         if (_targetRoot != null)
             _targetRoot.SetActive(active);
+
+        if (active)
+            AcquireInteractionLock();
+        else
+            ReleaseInteractionLock();
+    }
+
+    private void AcquireInteractionLock()
+    {
+        if (_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Acquire();
+        _holdsInteractionLock = true;
+        InventoryUI.Instance?.ShowInteractHint(false);
+    }
+
+    private void ReleaseInteractionLock()
+    {
+        if (!_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Release();
+        _holdsInteractionLock = false;
     }
 
     private bool IsInCurrentScene()
@@ -136,12 +165,11 @@ public class ToggleInteractionTrigger : MonoBehaviour
                SceneManager.GetActiveScene().name == _currentScene;
     }
 
-    private void ShowHint()
+    private void ShowHint(string hintText)
     {
-        if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
     }
 

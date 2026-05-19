@@ -80,7 +80,7 @@ public class ItemEffectController : MonoBehaviour
         if (_previewViewer != null)
             return _previewViewer;
 
-        _previewViewer = FindObjectOfType<ItemPreviewViewerUI>();
+        _previewViewer = ItemPreviewViewerUI.EnsureInstance();
         return _previewViewer;
     }
 }

@@ -18,6 +18,7 @@ public class CoatInteractionTrigger : MonoBehaviour
 
     private bool _playerInRange;
     private bool _hintShownByThisScript;
+    private bool _holdsInteractionLock;
     private bool _ignoreMouseWorldClickUntilRelease;
     private PlayerMovement _playerMovement;
     private Transform _playerTransform;
@@ -61,6 +62,7 @@ public class CoatInteractionTrigger : MonoBehaviour
 
         HideHint();
         UnlockPlayer();
+        ReleaseInteractionLock();
         _playerInRange = false;
     }
 
@@ -68,32 +70,37 @@ public class CoatInteractionTrigger : MonoBehaviour
     {
         InteractionFocusService.SetCandidate(this, _focusPoint, _playerInRange, _interactionPriority);
 
+        bool interactionAvailable = !GlobalInteractionLock.IsLocked || _holdsInteractionLock;
+
         bool hasFocus =
             _playerInRange &&
             _playerTransform != null &&
-            !GlobalInteractionLock.IsLocked &&
+            interactionAvailable &&
             InteractionFocusService.HasFocus(this, _playerTransform.position);
 
         RefreshHint(hasFocus);
         UpdateIgnoreMouseState();
 
-        HandleFInput(hasFocus);
+        HandleKeyboardInput(hasFocus);
         HandleMouseClickInput(hasFocus);
     }
 
-    private void HandleFInput(bool hasFocus)
+    private void HandleKeyboardInput(bool hasFocus)
     {
         if (!hasFocus) return;
-        if (!GameplayInputUtil.InteractPressedThisFrame()) return;
-        if (IsPopupOpen()) return;
 
         if (!IsCoat2Active())
         {
+            if (!GameplayInputUtil.InteractPressedThisFrame()) return;
+            if (IsPopupOpen()) return;
+
             OpenCoat2();
             return;
         }
 
-        if (CanCloseCoat2())
+        if (GameplayInputUtil.CancelPressedThisFrame() &&
+            GameplayInputUtil.ConsumeCancelThisFrame() &&
+            CanCloseCoat2())
             CloseCoat2();
     }
 
@@ -206,14 +213,16 @@ public class CoatInteractionTrigger : MonoBehaviour
         if (hasFocus && !IsPopupOpen())
         {
             if (!IsCoat2Active())
-                shouldShow = true;
+                ShowHint(ProjectInteractionHints.Interact);
             else if (CanCloseCoat2())
-                shouldShow = true;
+                ShowHint(ProjectInteractionHints.Close);
+            else
+                HideHint();
+
+            return;
         }
 
-        if (shouldShow)
-            ShowHint();
-        else
+        if (!shouldShow)
             HideHint();
     }
 
@@ -240,7 +249,7 @@ public class CoatInteractionTrigger : MonoBehaviour
     {
         if (!IsCoat2Active()) return false;
         if (IsPopupOpen()) return false;
-        if (GlobalInteractionLock.IsLocked) return false;
+        if (GlobalInteractionLock.IsLocked && !_holdsInteractionLock) return false;
         return AreAllClickablePointsViewed();
     }
 
@@ -298,7 +307,29 @@ public class CoatInteractionTrigger : MonoBehaviour
         if (_coat2 != null)
             _coat2.SetActive(active);
 
+        if (active)
+            AcquireInteractionLock();
+        else
+            ReleaseInteractionLock();
+
         UpdateCoatCanvasVisibility();
+    }
+
+    private void AcquireInteractionLock()
+    {
+        if (_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Acquire();
+        _holdsInteractionLock = true;
+        InventoryUI.Instance?.ShowInteractHint(false);
+    }
+
+    private void ReleaseInteractionLock()
+    {
+        if (!_holdsInteractionLock) return;
+
+        GlobalInteractionLock.Release();
+        _holdsInteractionLock = false;
     }
 
     private void UpdateCoatCanvasVisibility()
@@ -309,12 +340,11 @@ public class CoatInteractionTrigger : MonoBehaviour
         _coat2CanvasRoot.SetActive(shouldShowCanvas);
     }
 
-    private void ShowHint()
+    private void ShowHint(string hintText)
     {
-        if (_hintShownByThisScript) return;
         if (InventoryUI.Instance == null) return;
 
-        InventoryUI.Instance.ShowInteractHint(true);
+        InventoryUI.Instance.ShowInteractHint(true, hintText);
         _hintShownByThisScript = true;
     }
 

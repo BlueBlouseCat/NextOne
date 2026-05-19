@@ -25,6 +25,7 @@ public class InventoryUI : MonoBehaviour
 
     private PlayerItemController _pendingController;
     private WorldItemInteractable _pendingItem;
+    private bool _popupCanCloseWithCancel = true;
 
     private int _jumpSlot = -1;
     private Vector2[] _basePositions;
@@ -32,6 +33,7 @@ public class InventoryUI : MonoBehaviour
 
     public bool IsPopupOpen => _popupRoot != null && _popupRoot.activeSelf;
     public bool HasPendingPickup => _pendingItem != null;
+    public bool CanClosePopupWithCancel => _popupCanCloseWithCancel;
 
     private void Awake()
     {
@@ -148,10 +150,17 @@ public class InventoryUI : MonoBehaviour
             _interactHintRoot.SetActive(show && !GlobalInteractionLock.IsLocked);
     }
 
-    public void OpenInspectPopup(string title, string desc, PlayerItemController controller, WorldItemInteractable pendingItem = null)
+    public void OpenInspectPopup(
+        string title,
+        string desc,
+        PlayerItemController controller,
+        WorldItemInteractable pendingItem = null,
+        string popupHintText = null,
+        bool canCloseWithCancel = true)
     {
         _pendingController = controller;
         _pendingItem = pendingItem;
+        _popupCanCloseWithCancel = canCloseWithCancel;
 
         if (_titleText != null)
             _titleText.text = title;
@@ -160,7 +169,13 @@ public class InventoryUI : MonoBehaviour
             _descText.text = desc;
 
         if (_popupHintText != null)
-            _popupHintText.text = pendingItem != null ? ProjectInteractionHints.PopupPickup : ProjectInteractionHints.PopupClose;
+        {
+            _popupHintText.text = !string.IsNullOrWhiteSpace(popupHintText)
+                ? popupHintText
+                : pendingItem != null
+                    ? ProjectInteractionHints.PopupPickup
+                    : ProjectInteractionHints.PopupClose;
+        }
 
         if (_popupRoot != null)
             _popupRoot.SetActive(true);
@@ -181,6 +196,7 @@ public class InventoryUI : MonoBehaviour
     {
         _pendingController = null;
         _pendingItem = null;
+        _popupCanCloseWithCancel = true;
 
         if (_popupHintText != null)
             _popupHintText.text = string.Empty;

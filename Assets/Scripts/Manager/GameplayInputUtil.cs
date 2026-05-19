@@ -6,6 +6,7 @@ public static class GameplayInputUtil
     private static PlayerInput _cachedPlayerInput;
     private static InputActionAsset _cachedActionsAsset;
     private static int _lastResolveFrame = -1;
+    private static int _cancelConsumedFrame = -1;
 
     public static bool InteractPressedThisFrame()
     {
@@ -37,6 +38,20 @@ public static class GameplayInputUtil
         if (action != null) return action.WasPressedThisFrame();
 
         return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+    }
+
+    public static bool ConsumeCancelThisFrame()
+    {
+        if (_cancelConsumedFrame == Time.frameCount)
+            return false;
+
+        _cancelConsumedFrame = Time.frameCount;
+        return true;
+    }
+
+    public static bool IsCancelConsumedThisFrame()
+    {
+        return _cancelConsumedFrame == Time.frameCount;
     }
 
     public static bool SubmitPressedThisFrame()
