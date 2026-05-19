@@ -993,8 +993,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}
+  m_sharedMaterial: {fileID: 177640095862093432, guid: 9e8c6d1734d450e4386f566f16ca0052, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1084,8 +1084,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0616, y: 9.0948}
-  m_SizeDelta: {x: 107.6164, y: 62.1895}
+  m_AnchoredPosition: {x: 1, y: 14}
+  m_SizeDelta: {x: 169, y: 97}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &229852518
 GameObject:
@@ -2846,7 +2846,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _worldAnchorTarget: {fileID: 1259875087}
   _useParentAsDefaultTarget: 1
-  _worldOffset: {x: 0, y: 2.2, z: 0}
+  _worldOffset: {x: -0.4, y: 3.5, z: 0}
   _uiCanvas: {fileID: 1539645162}
   _boxRect: {fileID: 1398580647}
   _worldCamera: {fileID: 0}
@@ -5652,7 +5652,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -114.41388, y: -133.72003}
-  m_SizeDelta: {x: 206.2544, y: 137.4315}
+  m_SizeDelta: {x: 330, y: 220}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1398580648
 MonoBehaviour:
@@ -7373,9 +7373,7 @@ MonoBehaviour:
   _dialogueUI: {fileID: 690729131}
   _lines:
   - speaker: 1
-    content: 'hello
-
-'
+    content: "\u54E6\uFF01\u4F0A\u4E3D\u838E\u767D\u5C0F\u59D0\uFF01\u6B22\u8FCE\u4F60\u6765\u5230Kitty\u7684\u68A6\u5883\u55B5\u3002\u53EA\u6709\u5728\u6211\u7684\u68A6\u91CC\u627E\u5230\u51FA\u53E3\u548C\u6253\u5F00\u51FA\u53E3\u7684\u94A5\u5319\uFF0C\u6211\u4EEC\u624D\u80FD\u4E00\u8D77\u9192\u6765\u55B5\uFF5E\n"
   _launchDetectVelocityY: 0.5
   _launchDetectHeight: 0.15
   _landingVelocityThreshold: 0.05
