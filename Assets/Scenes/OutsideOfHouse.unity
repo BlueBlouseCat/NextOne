@@ -2401,9 +2401,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d25441bdeef3a143b14623999858b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hintId: OutsideOfHouse
   _childCanvasGroup: {fileID: 0}
+  _delay: 1.5
   _fadeDuration: 0.5
-  _collider2D: {fileID: 0}
 --- !u!61 &664795435
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2433,10 +2434,10 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -7.1146846, y: -0.35120225}
+  m_Offset: {x: -23.008522, y: 1.5989132}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2447,7 +2448,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 7.208354, y: 4.512025}
+  m_Size: {x: 38.996033, y: 29.522758}
   m_EdgeRadius: 0
 --- !u!4 &664795436
 Transform:
