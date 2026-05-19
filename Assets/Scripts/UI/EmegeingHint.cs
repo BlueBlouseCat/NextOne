@@ -42,9 +42,11 @@ public class EmegeingHint : MonoBehaviour
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
             col.isTrigger = true;
+
+        TriggerEnter2D();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void TriggerEnter2D()
     {
         if (_fadeTween != null)
             return;
