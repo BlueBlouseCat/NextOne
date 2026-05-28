@@ -1173,7 +1173,7 @@ Transform:
   m_GameObject: {fileID: 212295787}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07000021, y: -0.23999988, z: -10}
+  m_LocalPosition: {x: 6.85, y: -3.9099998, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3538,7 +3538,7 @@ Transform:
   m_GameObject: {fileID: 554146700}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07000021, y: -0.23999988, z: -10}
+  m_LocalPosition: {x: 1.8687966, y: -0.9843447, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3650,7 +3650,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 12
+  m_SortingOrder: 11
   m_Sprite: {fileID: 21300000, guid: 32fc343fa9427344c82ccf81c7807dcd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4546,7 +4546,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &725569779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5548,8 +5548,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hintId: House
   _childCanvasGroup: {fileID: 0}
-  _delay: 1.5
-  _fadeDuration: 0.5
+  _delay: 1
+  _fadeDuration: 1
 --- !u!61 &905781823
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -11980,7 +11980,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 11
+  m_SortingOrder: 12
   m_Sprite: {fileID: 21300000, guid: d798f152ab811ba4d9cda76794a22f41, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -13451,7 +13451,7 @@ Transform:
   m_GameObject: {fileID: 250924529632060130}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: -0.24, z: 0}
+  m_LocalPosition: {x: 6.85, y: -3.91, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
